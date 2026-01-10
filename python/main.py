@@ -17,7 +17,7 @@ PoseLandmarkerOptions = mp.tasks.vision.PoseLandmarkerOptions
 PoseLandmarkerResult = mp.tasks.vision.PoseLandmarkerResult
 VisionRunningMode = mp.tasks.vision.RunningMode
 
-def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
+def print_result(result, output_image: mp.Image, timestamp_ms: int):
     print('pose landmarker result: {}'.format(result))
 
 

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bc0df706cins0"]
+
+[ext_resource type="PackedScene" uid="uid://dwnh3dlcccdc8" path="res://python/py_bridge.tscn" id="1_21jd3"]
+[ext_resource type="Script" uid="uid://b6a6qvsj64apd" path="res://scenes/blank_scene.gd" id="1_dwiab"]
+
+[node name="BlankScene" type="Node2D"]
+script = ExtResource("1_dwiab")
+
+[node name="PyBridge" parent="." instance=ExtResource("1_21jd3")]
+open_console = true

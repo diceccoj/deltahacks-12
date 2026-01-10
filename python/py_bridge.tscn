@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dwnh3dlcccdc8"]
+
+[ext_resource type="Script" uid="uid://d2u2tp5aimfpy" path="res://python/py_bridge.gd" id="1_h6o5d"]
+
+[node name="PyBridge" type="Node"]
+script = ExtResource("1_h6o5d")
+open_console = true
