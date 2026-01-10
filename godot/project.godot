@@ -15,6 +15,10 @@ run/main_scene="res://camera_stream/camera_stream.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[dotnet]
+
+project/assembly_name="GodotPythonComm"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
