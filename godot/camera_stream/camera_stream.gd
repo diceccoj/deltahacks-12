@@ -5,6 +5,7 @@ var server: UDPServer
 func _ready() -> void:
 	server = UDPServer.new()
 	server.listen(4242)
+	OS.execute("python", ["main.py"])
 
 func _decode_image(frame_data: PackedByteArray) -> Image:
 	var image = Image.new()
