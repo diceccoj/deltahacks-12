@@ -11,7 +11,7 @@ enum Exercise {
 	KNEE_UP
 }
 
-@onready var p1_meter_gui : Dictionary[Exercise, ExerciseMeter] = {
+@onready var p1_meter_gui: Dictionary[Exercise, ExerciseMeter] = {
 	Exercise.SQUAT: $"../P1Meter/Squat",
 	Exercise.JJ: $"../P1Meter/JJ",
 	Exercise.PUSH_UP: $"../P1Meter/PushUp",
@@ -19,7 +19,7 @@ enum Exercise {
 	Exercise.KNEE_UP: $"../P1Meter/KneeUp"
 }
 
-@onready var p2_meter_gui : Dictionary[Exercise, ExerciseMeter] = {
+@onready var p2_meter_gui: Dictionary[Exercise, ExerciseMeter] = {
 	Exercise.SQUAT: $"../P2Meter/Squat",
 	Exercise.JJ: $"../P2Meter/JJ",
 	Exercise.PUSH_UP: $"../P1Meter/PushUp",
@@ -40,9 +40,9 @@ var state_template := {
 	"lunge_ready": false,
 	"ku_ready": false,
 	
-	"squat_time" : 0,
-	"jj_count" : 0,
-	"jj_did_one" : false,
+	"squat_time": 0,
+	"jj_count": 0,
+	"jj_did_one": false,
 	"pu_count": 0,
 	"pu_did_one": false,
 	"lunge_time": 0,
@@ -83,7 +83,6 @@ signal exercise_detected(camera_id: int, exercise: String)
 signal mask_updated(camera_id: int, texture: ImageTexture)
 
 func _ready() -> void:
-	
 	# Create server for camera 0 (port 4242)
 	camera_data[0]["server"] = UDPServer.new()
 	camera_data[0]["server"].listen(4242)
@@ -162,7 +161,6 @@ func process_camera(camera_id: int) -> void:
 				mask_updated.emit(camera_id, texture)
 
 
-
 func check_for_exercises(camera_id: int, delta: float) -> void:
 	var data = camera_data[camera_id]
 	var poses = data["poses"]
@@ -172,12 +170,12 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		# jjs: fill meter when alternating between jj open and close, 20 times
 	var state = player_state[camera_id]
 	var gui := p1_meter_gui if camera_id == 0 else p2_meter_gui
-	var pose : String = data["current_pose"]
+	var pose: String = data["current_pose"]
 	#print(camera_id, " ", pose)
 	
-	var mask_pos = $"../Mask1".position + $"../Mask1".size/2 if camera_id == 0 else $"../Mask2".position + $"../Mask2".size/2
+	var mask_pos = $"../Mask1".position + $"../Mask1".size / 2 if camera_id == 0 else $"../Mask2".position + $"../Mask2".size / 2
 	
-	if camera_id == 0:
+	if camera_id == 0 or (camera_id == 1 and Input.is_key_pressed(KEY_SHIFT)):
 		if Input.is_key_pressed(KEY_A):
 			pose = "place_left"
 		elif Input.is_key_pressed(KEY_S):
@@ -272,8 +270,8 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 			["ku_ready", Exercise.KNEE_UP]
 		]
 		for p in d:
-			var s : String = p[0]
-			var ex : Exercise = p[1]
+			var s: String = p[0]
+			var ex: Exercise = p[1]
 			if state[s]: # ready
 				completed_exercise.emit(camera_id, ex, pose == "place_left")
 				state[s] = false

@@ -16,8 +16,8 @@ class_name Battlefield
 enum Lane {Left, Right}
 
 var units_lib: Dictionary[Unit.Type, PackedScene] = {
-	Unit.Type.WARRIOR: preload("uid://b345cshf836o5"),
-	Unit.Type.ARCHER: preload("uid://bknltwirfyy0p"),
+	Unit.Type.WARRIOR: preload("res://scenes/units/warrior.tscn"),
+	Unit.Type.ARCHER: preload("res://scenes/units/archer.tscn"),
 	Unit.Type.PAWN: preload("res://scenes/units/pawn.tscn"),
 	Unit.Type.LANCER: preload("res://scenes/units/lancer.tscn"),
 	Unit.Type.MONK: preload("res://scenes/units/monk.tscn")

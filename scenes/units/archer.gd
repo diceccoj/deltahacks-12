@@ -1,8 +1,10 @@
 extends Unit
 class_name Archer
 
-const firing_delay : float = 4.0
+const firing_delay : float = 5.0
 var timer: Timer
+
+var firing := false
 
 const arrow_scene = preload("res://scenes/units/arrow.tscn")
 
@@ -16,6 +18,7 @@ func _ready() -> void:
 	timer.timeout.connect(fire_arrow)
 	timer.start()
 	animation_handler("run")
+	firing = false
 
 func _process(delta: float):
 	# jnth note: what is this for?
@@ -24,13 +27,15 @@ func _process(delta: float):
 	elif (velocity.x >= -move_speed):
 		velocity.x += -move_speed * delta
 	
-	move_and_slide()
+	if not firing:
+		move_and_slide()
 	
 	if (current_hp <= 0):
 		perish()
 
 # play animation, fire arrow, and start timer
 func fire_arrow():
+	firing = true
 	velocity.x = 0.0
 	animation_handler("attack")
 	var arrow : Arrow = arrow_scene.instantiate()
@@ -39,6 +44,8 @@ func fire_arrow():
 	arrow.position = self.position
 	
 	timer.start()
+	await sprite.animation_finished
+	firing = false
 
 # archer should never attack head on
 func attack_unit(_unit : Unit):

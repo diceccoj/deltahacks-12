@@ -38,11 +38,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -1.0
+offset_top = 2.0
 offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.96, 1e-05)
+scale = Vector2(1, 1e-05)
 pivot_offset = Vector2(34, 69)
 theme_override_styles/panel = SubResource("StyleBoxFlat_3op5w")
 
