@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=3 uid="uid://dnf5n13sfx2hp"]
+[gd_scene load_steps=50 format=3 uid="uid://cnylllwu3hc30"]
 
 [ext_resource type="Script" uid="uid://cbnu86rq428fi" path="res://scenes/units/unit.gd" id="1_3gqno"]
 [ext_resource type="Texture2D" uid="uid://mx6ucgx0qpjm" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Pawn/Pawn_Interact Axe.png" id="2_3gqno"]

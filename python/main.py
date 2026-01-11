@@ -7,8 +7,29 @@ import math
 import signal
 import sys
 from mediapipe.tasks import python
+from mediapipe.tasks.python.vision.core.image import Image as MPImage
 from mediapipe.tasks.python import vision
 import queue
+import struct
+
+def list_available_cameras(max_test=10):
+    available_cameras = []
+    for i in range(max_test):
+        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        if cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                print(f"Camera {i}: {int(width)}x{int(height)} @ {fps} FPS")
+                available_cameras.append(i)
+            cap.release()
+    print("thats all the cams....")
+    return available_cameras
+
+list_available_cameras()
 
 # Global state for each camera
 camera_states = {
@@ -195,21 +216,34 @@ def create_result_callback(camera_id):
     """Factory function to create callback for specific camera"""
     def result_cb(result, output_image: mp.Image, timestamp_ms: int):
         with camera_states[camera_id]['lock']:
+            #a = cv2.waitKey(1) & 0xFF
+            #if a == ord('w'): 
+            #print(result.segmentation_masks)
             camera_states[camera_id]['latest_result'] = result
     return result_cb
+
+def encode_seg_mask(seg_masks):
+    if seg_masks == None:
+        black_mask = np.zeros((120, 160), dtype=np.uint8)
+        return cv2.imencode('.jpg', black_mask, [cv2.IMWRITE_JPEG_QUALITY, 75])
+    mask_array = seg_masks[0].numpy_view()
+    binary_mask = (mask_array > 0.5).astype(np.uint8) * 255
+    small_mask = cv2.resize(binary_mask, (160, 120))
+    return cv2.imencode('.jpg', small_mask, [cv2.IMWRITE_JPEG_QUALITY, 75])
 
 def process_camera(camera_id):
     """Process a single camera in a separate thread (NO cv2.imshow here)"""
     global running
     
-    cap = cv2.VideoCapture(camera_id)
+    cap = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
     if not cap.isOpened():
         print(f"Error: Could not open camera {camera_id}")
         return
     
     options = PoseLandmarkerOptions(
-        base_options=BaseOptions(model_asset_path="pose_landmarker_heavy.task"),
+        base_options=BaseOptions(model_asset_path="pose_landmarker_full.task"),
         running_mode=VisionRunningMode.LIVE_STREAM,
+        output_segmentation_masks=True,
         result_callback=create_result_callback(camera_id))
     
     try:
@@ -225,18 +259,20 @@ def process_camera(camera_id):
                     print(f"Error: Camera {camera_id} failed to capture")
                     break
                 
-                frame = cv2.resize(frame, (1200, 900))
+                frame = cv2.resize(frame, (1200//2, 900//2))
                 frame = cv2.flip(frame, 1)
                 
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
                 landmarker.detect_async(mp_image, counter)
                 
+                seg_masks = None
                 annotated_frame = frame.copy()
                 pose_str = "?"
                 
                 with camera_states[camera_id]['lock']:
                     if camera_states[camera_id]['latest_result'] and \
                        camera_states[camera_id]['latest_result'].pose_landmarks:
+                        seg_masks = camera_states[camera_id]['latest_result'].segmentation_masks
                         annotated_frame = draw_landmarks(
                             annotated_frame, 
                             camera_states[camera_id]['latest_result']
@@ -244,18 +280,30 @@ def process_camera(camera_id):
                         landmarks = camera_states[camera_id]['latest_result'].pose_landmarks
                         for pose in landmarks:
                             pose_str = detect_pose(pose)
-                
+    
+
                 # Add camera ID and pose to display - smaller, nicer font
                 cv2.putText(annotated_frame, f"Camera {camera_id}: {pose_str}",
-                           (5, 50), cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 100, 0), 3)
+                           (5, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 100, 0), 3)
                 cv2.putText(annotated_frame, "Press 'q' or ESC to exit",
                            (5, annotated_frame.shape[0] - 15),
                            cv2.FONT_HERSHEY_DUPLEX, 0.7, (100, 200, 255), 2)
                 
+
+
                 # Store the processed frame (don't display here!)
                 with camera_states[camera_id]['lock']:
                     camera_states[camera_id]['latest_frame'] = cv2.resize(annotated_frame, (screen_width, screen_height))
-                
+                    camera_states[camera_id]['seg_mask'] = seg_masks
+
+                seg_success, seg_encoded = encode_seg_mask(seg_masks)
+
+                if seg_success:
+                    mask_bytes = seg_encoded.tobytes()
+                    header = b'MASK' + struct.pack('I', len(mask_bytes))
+                    mask_port = PORTS[camera_id] + 100  # e.g., 4342, 4343
+                    sockets[camera_id].sendto(header + mask_bytes, (SERVER_IP, mask_port))
+
                 # Send to different port for each camera
                 if len(pose_str) <= 65507:
                     sockets[camera_id].sendto(
@@ -306,18 +354,22 @@ def main():
             # Get latest frames from both cameras
             frame0 = None
             frame1 = None
+            segmask0 = None
+            segmask1 = None
             
             with camera_states[0]['lock']:
                 if camera_states[0]['latest_frame'] is not None:
                     frame0 = camera_states[0]['latest_frame'].copy()
+                    segmask0 = camera_states[0]['seg_mask']
             
             with camera_states[1]['lock']:
                 if camera_states[1]['latest_frame'] is not None:
                     frame1 = camera_states[1]['latest_frame'].copy()
-            
+                    #segmask1 = camera_states[1]['seg_mask'].copy()
+
             # Display frames
             if frame0 is not None:
-                cv2.imshow(window0, frame0)
+                cv2.imshow(window0, frame0)#segmask0[0].numpy_view())
             if frame1 is not None:
                 cv2.imshow(window1, frame1)
             

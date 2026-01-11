@@ -4,7 +4,7 @@ class_name Archer
 const firing_delay : float = 4.0
 var timer: Timer
 
-const arrow_scene = preload("uid://bf53kmqld5lqo")
+const arrow_scene = preload("res://scenes/units/arrow.tscn")
 
 @onready var arrow_bucket: Node = $ArrowBucket
 
