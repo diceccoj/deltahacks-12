@@ -91,7 +91,7 @@ func _on_poses_completed_exercise(player: int, exercise: PoseServer.Exercise, le
 		PoseServer.Exercise.SQUAT:
 			type = Unit.Type.ARCHER
 		PoseServer.Exercise.JJ:
-			type = Unit.Type.LANCER
+			type = Unit.Type.WARRIOR
 		PoseServer.Exercise.PUSH_UP:
 			type = Unit.Type.LANCER
 		PoseServer.Exercise.KNEE_UP:

@@ -16,7 +16,7 @@ func _process(delta: float) -> void:
 	
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if (body is Unit):
+	if (body is Unit or body is Monk):
 		if (team != body.team):
 			body.take_dmg(dmg)
 			body.velocity.x = 0
