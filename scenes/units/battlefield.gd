@@ -11,7 +11,7 @@ class_name Battlefield
 @onready var blue_start_pos: Marker2D = $RMid
 
 @onready var pose_server: PoseServer = $Poses
-@onready var endscreen: Endscreen = $Endscreen
+@onready var endscreen = $Endscreen
 
 
 enum Lane {Left, Right}
