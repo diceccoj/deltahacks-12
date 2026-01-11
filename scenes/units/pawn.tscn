@@ -189,9 +189,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lqc1a")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_blue",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -212,9 +212,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0wlfi")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_red",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -328,11 +328,13 @@ height = 68.0
 [node name="Pawn" type="CharacterBody2D"]
 script = ExtResource("1_3gqno")
 type = 5
+move_speed = 120.0
+attack = 7.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_yam55")
-animation = &"attack_blue"
+animation = &"attack_red"
 autoplay = "idle_red"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

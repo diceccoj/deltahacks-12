@@ -188,9 +188,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jtod2")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_blue",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -202,9 +202,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7t7om")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_red",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -342,11 +342,14 @@ height = 68.0
 [node name="Lancer" type="CharacterBody2D"]
 script = ExtResource("1_hfulh")
 type = 3
+move_speed = 30.0
+attack = 20.0
+total_hp = 30.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_yam55")
-animation = &"idle_blue"
+animation = &"attack_blue"
 autoplay = "idle_red"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

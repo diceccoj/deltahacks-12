@@ -10,7 +10,7 @@ enum Team {
 
 @export var team : Team
 
-var max_health := 100.0
+var max_health := 150.0
 var health : float
 var bar_scale := 1.0
 
@@ -19,7 +19,7 @@ func _ready():
 
 func take_damage(damage: float):
 	health -= damage
-	if health < 0.0:
+	if health <= 0.0:
 		died.emit()
 	health = max(0.0, health)
 	

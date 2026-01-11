@@ -24,7 +24,7 @@ enum Team {
 var team : Team
 var current_hp : float
 
-@onready var sprite := $AnimatedSprite2D
+@onready var sprite : AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision: CollisionShape2D = $CollisionShape2D
 
 
@@ -48,7 +48,17 @@ func spawn_and_setup(team_ : Team, start_pos : Vector2) -> void:
 		collision_mask = (1 << 0) | (1 << 1)
 		velocity.x = -move_speed
 	
-	animation_handler("idle")
+	# spawning a unit ontop of an enemy causes massive pushback
+	for index in get_slide_collision_count():
+		var clsn = get_slide_collision(index)
+		var collided_obj := clsn.get_collider()
+		#print("Collided with: ", body.name)
+		if (collided_obj is Unit):
+			if (collided_obj.team != team): collided_obj.push_back(150)
+	
+	animation_handler("run")
+	
+	
 
 
 func _process(delta: float):
@@ -70,18 +80,19 @@ func _process(delta: float):
 
 	if (current_hp <= 0):
 		perish()
+	
+	
 
 func attack_unit(unit : Unit):
 	animation_handler("attack")
 	await sprite.animation_finished
-	
 	# check if user still exists because another unit may have killed it
-	if (unit): unit.take_dmg(attack)
+	if (unit != null): unit.take_dmg(attack)
 
 func attack_tower(tower : Tower):
 	animation_handler("attack")
 	await sprite.animation_finished
-	tower.take_damage(attack)
+	if (tower != null): tower.take_damage(attack)
 
 # subtract hp (possibly update an hp bar?)
 func take_dmg(dmg : float):
@@ -92,9 +103,14 @@ func perish():
 	self.queue_free()
 
 # kicks user back when hit
-func push_back():
-	velocity.x = -move_speed if team == Team.Red else move_speed
+func push_back(amnt : float = move_speed):
+	velocity.x = -amnt if team == Team.Red else amnt
 
 # handles animation based on team
 func animation_handler(anim : String):
 	sprite.play(anim + ("_red" if team == Team.Red else "_blue"))
+	
+	# if just finished attack, reset animation loop
+	if (anim.contains("attack")): 
+		await sprite.animation_finished
+		animation_handler("run")
