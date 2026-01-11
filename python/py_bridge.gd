@@ -9,7 +9,7 @@ var process_id : int = -1
 
 func _ready() -> void:
 	# create python execution command
-	python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://") +  " && .venv/bin/python " + python_file.trim_prefix("res://")
+	python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://").replace(" ", "\\ ") +  " && .venv/bin/python " + python_file.trim_prefix("res://")
 
 # start the window
 func start_process() -> void:
