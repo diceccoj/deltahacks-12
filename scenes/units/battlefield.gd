@@ -1,6 +1,8 @@
 extends Node2D
 class_name Battlefield
 
+@onready var py_bridge := $PyBridge
+
 @onready var red_tower: Tower = $RedTower
 @onready var blue_tower: Tower = $BlueTower
 @onready var unit_bucket: Node = $UnitBucket
@@ -34,6 +36,7 @@ func _ready() -> void:
 		}
 	}
 	
+	py_bridge.start_process()
 
 
 func spawn_unit(type: Unit.Type, team: Unit.Team, lane: Lane):

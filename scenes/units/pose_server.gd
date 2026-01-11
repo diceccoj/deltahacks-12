@@ -8,34 +8,46 @@ enum Exercise {
 	JJ,
 	PUSH_UP,
 	LUNGE,
+	KNEE_UP
 }
 
 @onready var p1_meter_gui : Dictionary[Exercise, ExerciseMeter] = {
 	Exercise.SQUAT: $"../P1Meter/Squat",
 	Exercise.JJ: $"../P1Meter/JJ",
-	Exercise.PUSH_UP: $"../P1Meter/PushUp"
+	Exercise.PUSH_UP: $"../P1Meter/PushUp",
+	Exercise.LUNGE: $"../P1Meter/Lunge",
+	Exercise.KNEE_UP: $"../P1Meter/KneeUp"
 }
 
 @onready var p2_meter_gui : Dictionary[Exercise, ExerciseMeter] = {
 	Exercise.SQUAT: $"../P2Meter/Squat",
 	Exercise.JJ: $"../P2Meter/JJ",
-	Exercise.PUSH_UP: $"../P1Meter/PushUp"
+	Exercise.PUSH_UP: $"../P1Meter/PushUp",
+	Exercise.LUNGE: $"../P2Meter/Lunge",
+	Exercise.KNEE_UP: $"../P2Meter/KneeUp"
 }
 
 const MAX_SQUAT_TIME = 2
 const MAX_JJ_COUNT = 19
 const MAX_PU_COUNT = 3
+const MAX_LUNGE_TIME = 3
+const MAX_KU_COUNT = 19
 
 var state_template := {
 	"squat_ready": false,
 	"jj_ready": false,
 	"pu_ready": false,
+	"lunge_ready": false,
+	"ku_ready": false,
 	
 	"squat_time" : 0,
 	"jj_count" : 0,
 	"jj_did_one" : false,
 	"pu_count": 0,
-	"pu_did_one": false
+	"pu_did_one": false,
+	"lunge_time": 0,
+	"ku_count": 0,
+	"ku_did_one": false
 }
 
 var player_state = [state_template.duplicate_deep(), state_template.duplicate_deep()]
@@ -177,6 +189,14 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		pose = "push_up_down"
 	elif Input.is_key_pressed(KEY_J):
 		pose = "push_up"
+	elif Input.is_key_pressed(KEY_K):
+		pose = "knee_up_l"
+	elif Input.is_key_pressed(KEY_L):
+		pose = "knee_up_r"
+	elif Input.is_key_pressed(KEY_Z):
+		pose = "right lunge"
+	elif Input.is_key_pressed(KEY_X):
+		pose = "left lunge"
 	
 	if Input.is_action_pressed(&"ui_left"):
 		var start_pos = mask_pos
@@ -194,6 +214,18 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		if not state["squat_ready"]:
 			state["squat_time"] = max(0, state["squat_time"] - delta)
 			gui[Exercise.SQUAT].set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
+	
+	if pose == "right lunge" or pose == "left lunge":
+		state["lunge_time"] += delta
+		gui[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
+		if state["lunge_time"] > MAX_SQUAT_TIME:
+			state["lunge_ready"] = true
+			gui[Exercise.LUNGE].set_readied(true)
+	else:
+		if not state["lunge_ready"]:
+			state["lunge_time"] = max(0, state["lunge_time"] - delta)
+			gui[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
+	
 	
 	if (pose == "jumping_jacks_open" and !state["jj_did_one"]) \
 		or ((pose == "standing" or pose == "jumping_jacks_closed") and state["jj_did_one"]):
@@ -213,13 +245,23 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		if state["pu_count"] >= MAX_PU_COUNT:
 			state["pu_ready"] = true
 			gui[Exercise.PUSH_UP].set_readied(true)
-			print("WEADY")
+			
+	if (pose == "knee_up_l" and !state["ku_did_one"]) or (pose == "knee_up_r" and state["ku_did_one"]):
+		state["ku_did_one"] = !state["ku_did_one"]
+		state["ku_count"] += 1
+		gui[Exercise.KNEE_UP].set_progress(clamp(float(state["ku_count"]) / MAX_KU_COUNT, 0, 1))
+		if state["ku_count"] >= MAX_KU_COUNT:
+			state["ku_ready"] = true
+			gui[Exercise.KNEE_UP].set_readied(true)
 	
-	
+	## SEEND IT!
 	if pose == "place_left" || pose == "place_right":
 		var d := [
 			["squat_ready", Exercise.SQUAT],
 			["jj_ready", Exercise.JJ],
+			["pu_ready", Exercise.PUSH_UP],
+			["lunge_ready", Exercise.LUNGE],
+			["ku_ready", Exercise.KNEE_UP]
 		]
 		for p in d:
 			var s : String = p[0]
@@ -235,6 +277,14 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 				elif ex == Exercise.JJ:
 					state["jj_count"] = 0
 					state["jj_did_one"] = false
+				elif ex == Exercise.PUSH_UP:
+					state["pu_count"] = 0
+					state["pu_did_one"] = false
+				elif ex == Exercise.LUNGE:
+					state["lunge_time"] = 0
+				elif ex == Exercise.KNEE_UP:
+					state["ku_count"] = 0
+					state["ku_did_one"] = false
 	
 	
 	# Define exercise pairs: [start_pose, end_pose, exercise_name, alt_start_pose (optional)]

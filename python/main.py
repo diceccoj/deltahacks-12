@@ -181,6 +181,16 @@ def detect_pose(landmarks):
             if wrist_height - shoulder_height > 0.1:
                 return "push_up"
 
+    if l["left_knee"] and l["left_hip"]:
+        dist = abs(l["left_knee"].y - l["left_hip"].y)
+        if dist < 0.05:
+            return "knee_up_l"
+    
+    if l["right_knee"] and l["right_hip"]:
+        dist = abs(l["right_knee"].y - l["right_hip"].y)
+        if dist < 0.05:
+            return "knee_up_r"
+
     if l["left_ankle"] and l["right_ankle"]:
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
         ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
