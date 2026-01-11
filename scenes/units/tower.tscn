@@ -110,7 +110,7 @@ expand_mode = 1
 position = Vector2(0, 5)
 scale = Vector2(3.2604167, 3.0104167)
 sprite_frames = SubResource("SpriteFrames_sg7ig")
-animation = &"tower_kaboom"
+autoplay = "default"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

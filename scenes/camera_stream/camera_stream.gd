@@ -1,5 +1,6 @@
 extends TextureRect
 
+@onready var endscreen: Control = $Endscreen
 var server: UDPServer
 
 func _ready() -> void:

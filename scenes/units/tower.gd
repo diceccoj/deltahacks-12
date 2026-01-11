@@ -24,7 +24,7 @@ func _ready():
 
 func take_damage(damage: float):
 	health -= damage
-	if health <= 0.0 and (not tower_fallen):
+	if health <= 0.0:
 		tower_fall()
 	health = max(0.0, health)
 	
@@ -46,7 +46,6 @@ func _on_body_entered(body: Node2D) -> void:
 
 # queued when tower falls
 func tower_fall():
-	tower_fallen = true
 	explosion_effect.play("tower_kaboom")
 	await explosion_effect.animation_finished
 	died.emit()
