@@ -19,7 +19,7 @@ func start_process() -> void:
 			python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://").replace(" ", "\\ ") +  (" && .venv/bin/python " if use_venv else " && python ") + python_file.trim_prefix("res://")
 			process_id = OS.create_process("bash", ["-c", python_cmnd_string])
 		"Windows":
-			python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://").replace(" ", "\\ ") +  (" && .venv\\Scripts\\python " if use_venv else " && python ") + python_file.trim_prefix("res://")
+			python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://").replace(" ", "\\ ") +  (" && .venv\\Scripts\\python " if use_venv else " && python ") + python_file.trim_prefix("res://").replace("/", "\\")
 			process_id = OS.execute("cmd.exe", ["/c", python_cmnd_string])
 		_:
 			push_error("Unrecognized OS!")
