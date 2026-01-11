@@ -5,6 +5,9 @@ extends Control
 @onready var blue_wins := $BlueTeamWins
 @onready var scroll := $Scroll
 @onready var play_again := $PlayAgainButton
+@onready var fade_animation: ColorRect = $"../FadeAnimation"
+
+var button_type = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -42,4 +45,13 @@ func show_end_screen(winning_team_red: bool) -> void:
 
 # Replace with reset to start of game state
 func _on_play_again_pressed() -> void: 
-	pass # Replace with function body.
+	button_type = "replay" 
+	$"../FadeAnimation".show()
+	$"../FadeAnimation/FadeTimer".start()
+	$"../FadeAnimation/AnimationPlayer".play("fadein") # Replace with function body.
+
+
+func _on_fade_timer_timeout() -> void:
+	if button_type == "replay":
+		get_tree().change_scene_to_file("") #Make this the start screen
+		# Same note, you'll have to link fade in and play it on the new scene
