@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://chjaf5qxn6dsc" path="res://assets/5as2dwa6.png" id="1_wtumw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3op5w"]
-bg_color = Color(1, 0.90533334, 0.29000002, 1)
+bg_color = Color(0.77254903, 1, 0.34901962, 1)
 
 [node name="ExerciseMeter" type="Control"]
 layout_mode = 3
@@ -16,6 +16,7 @@ offset_bottom = -495.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3op5w")
+color = Color(0.77250004, 1, 0.35000002, 1)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0

@@ -1272,7 +1272,7 @@ texture = ExtResource("54_ix71i")
 
 [node name="Particles" type="Node2D" parent="."]
 script = ExtResource("53_s7b68")
-particle_color = Color(1, 0.90588236, 0.2901961, 1)
+particle_color = Color(0.77254903, 1, 0.34901962, 1)
 
 [node name="PyBridge" type="Node" parent="."]
 script = ExtResource("55_n4nv1")

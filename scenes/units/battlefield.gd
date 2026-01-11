@@ -16,8 +16,8 @@ var units_lib : Dictionary[Unit.Type, PackedScene] = {
 	Unit.Type.WARRIOR: preload("uid://b345cshf836o5"),
 	Unit.Type.ARCHER: preload("uid://bknltwirfyy0p"),
 	Unit.Type.PAWN: preload("res://scenes/units/pawn.tscn"),
-	Unit.Type.LANCER: preload("res://scenes/units/lancer.tscn")
-	#Unit.Type.MONK: preload("uid://clpn1t4f5kxh2"), may not be needed
+	Unit.Type.LANCER: preload("res://scenes/units/lancer.tscn"),
+	Unit.Type.MONK: preload("res://scenes/units/lancer.tscn")
 }
 
 var positions_lib: Dictionary[Unit.Team, Dictionary]
@@ -25,7 +25,7 @@ var positions_lib: Dictionary[Unit.Team, Dictionary]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$"../FadeAnimation/AnimationPlayer".play("fadeout")
+	#$"../FadeAnimation/AnimationPlayer".play("fadeout")
 	
 	positions_lib = {
 		Unit.Team.Red: {
