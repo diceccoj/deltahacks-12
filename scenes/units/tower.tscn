@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://c48rrqnuxkjm4"]
 
 [ext_resource type="Texture2D" uid="uid://vlpvdgwhe256" path="res://assets/Tiny Swords (Free Pack)/Buildings/Red Buildings/Tower.png" id="1_d4mai"]
-[ext_resource type="Script" uid="uid://ch6eqv8ql25dj" path="res://units/tower.gd" id="1_d8jq7"]
-[ext_resource type="Texture2D" uid="uid://bupij1ovmj8gf" path="res://units/BigBar_Fill.png" id="3_2nwax"]
+[ext_resource type="Script" uid="uid://ch6eqv8ql25dj" path="res://scenes/units/tower.gd" id="1_d8jq7"]
+[ext_resource type="Texture2D" uid="uid://bupij1ovmj8gf" path="res://scenes/units/BigBar_Fill.png" id="3_2nwax"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_d4mai"]
 radius = 45.0
@@ -10,6 +10,7 @@ height = 102.0
 
 [node name="Tower" type="Area2D"]
 position = Vector2(-1, 0)
+collision_mask = 7
 script = ExtResource("1_d8jq7")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

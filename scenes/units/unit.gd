@@ -8,17 +8,30 @@ enum Type {
 }
 
 @export var type : Type
+@export var red_team : bool
 
 @onready var sprite := $AnimatedSprite2D
 
-var flipped := false
+var dir := 1
 
 
 func _ready() -> void:
 	velocity.x = 100
+	if red_team:
+		collision_layer = 1 << 1
+		collision_mask = (1 << 0) | (1 << 2)  
+	else:
+		sprite.flip_h = true
+		collision_layer = 1 << 2
+		collision_mask = (1 << 0) | (1 << 1)
 	
 func _process(delta: float):
+	
+	if velocity.x <= dir * 100:
+		velocity.x += dir * 100 * delta
+		
+	
 	move_and_slide()
 
 func push_back():
-	pass
+	velocity.x = -100 * dir
