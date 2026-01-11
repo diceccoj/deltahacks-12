@@ -29,7 +29,7 @@ enum Exercise {
 
 const MAX_SQUAT_TIME = 1.5
 const MAX_JJ_COUNT = 14
-const MAX_PU_COUNT = 2
+const MAX_PU_COUNT = 3
 const MAX_LUNGE_TIME = 2
 const MAX_KU_COUNT = 9
 
