@@ -1,10 +1,11 @@
-[gd_scene load_steps=52 format=3 uid="uid://clpn1t4f5kxh2"]
+[gd_scene load_steps=64 format=3 uid="uid://clpn1t4f5kxh2"]
 
-[ext_resource type="Script" uid="uid://cbnu86rq428fi" path="res://scenes/units/unit.gd" id="1_e3n8g"]
+[ext_resource type="Script" uid="uid://biw8etghf665" path="res://scenes/units/monk.gd" id="1_lbf7i"]
 [ext_resource type="Texture2D" uid="uid://crn2e41b4ja7s" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Monk/Heal.png" id="2_e3n8g"]
 [ext_resource type="Texture2D" uid="uid://cl0q4th5vncxd" path="res://assets/Tiny Swords (Free Pack)/Units/Red Units/Monk/Heal.png" id="3_lbf7i"]
 [ext_resource type="Texture2D" uid="uid://c427ji3w7a2wv" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Monk/Idle.png" id="4_gr7mw"]
 [ext_resource type="Texture2D" uid="uid://dua2wqcy10peg" path="res://assets/Tiny Swords (Free Pack)/Units/Red Units/Monk/Idle.png" id="5_3u4mi"]
+[ext_resource type="Texture2D" uid="uid://c81k0o4mmf4xl" path="res://assets/Tiny Swords (Free Pack)/Particle FX/Explosion_02.png" id="6_gr7mw"]
 [ext_resource type="Texture2D" uid="uid://4kese5d7myfd" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Monk/Run.png" id="6_jvucq"]
 [ext_resource type="Texture2D" uid="uid://f8ffemsl0xuv" path="res://assets/Tiny Swords (Free Pack)/Units/Red Units/Monk/Run.png" id="7_53igd"]
 
@@ -144,6 +145,46 @@ region = Rect2(768, 0, 192, 192)
 atlas = ExtResource("5_3u4mi")
 region = Rect2(960, 0, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_3u4mi"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jvucq"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53igd"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2jbry"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g5e02"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_scso7"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s6m4i"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0lmja"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_reje8"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(1536, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_of0sy"]
+atlas = ExtResource("6_gr7mw")
+region = Rect2(1728, 0, 192, 192)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rb5sv"]
 atlas = ExtResource("6_jvucq")
 region = Rect2(0, 0, 192, 192)
@@ -214,7 +255,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_blue",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -252,7 +293,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_red",
-"speed": 5.0
+"speed": 7.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -302,6 +343,41 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_3u4mi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jvucq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_53igd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2jbry")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g5e02")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_scso7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s6m4i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0lmja")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_reje8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_of0sy")
+}],
+"loop": true,
+"name": &"kaboom?",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_rb5sv")
 }, {
 "duration": 1.0,
@@ -315,7 +391,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"run_blue",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -332,24 +408,33 @@ animations = [{
 }],
 "loop": true,
 "name": &"run_red",
-"speed": 5.0
+"speed": 15.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l1whp"]
 radius = 19.0
 height = 68.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_lbf7i"]
+radius = 91.44397
+
 [node name="Monk" type="CharacterBody2D"]
-script = ExtResource("1_e3n8g")
-type = 4
-move_speed = 20.0
-attack = 0.0
+script = ExtResource("1_lbf7i")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_yam55")
-animation = &"attack_red"
+animation = &"kaboom?"
 autoplay = "idle_red"
+frame_progress = 0.455203
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_l1whp")
+
+[node name="BlastRadius" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BlastRadius"]
+shape = SubResource("CircleShape2D_lbf7i")
+
+[connection signal="body_entered" from="BlastRadius" to="." method="_on_blast_radius_body_entered"]
+[connection signal="body_exited" from="BlastRadius" to="." method="_on_blast_radius_body_exited"]
