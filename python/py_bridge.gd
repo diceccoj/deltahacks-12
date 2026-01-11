@@ -2,39 +2,28 @@ extends Node
 class_name PyBridge
 
 @export var python_file =  "res://python/main.py"
-@export var open_console = false
 
 var user_terminal = ""
+var python_cmnd_string : String
+var process_id : int = -1
 
 func _ready() -> void:
-	# determine user console
-	if (open_console):
-		var os_name := OS.get_name()
+	# create python execution command
+	python_cmnd_string = "cd " + ProjectSettings.globalize_path("res://") +  " && .venv/bin/python " + python_file.trim_prefix("res://")
 
-		match os_name:
-			"Windows":
-				user_terminal = "CMD.exe"
-			"macOS":
-				user_terminal = "x-term"
-			"Linux":
-				# just gonna pretend only gnome terminal exists
-				user_terminal = "gnome-terminal"
-			_:
-				push_error("Unsupported OS: " + os_name)
+# start the window
+func start_process() -> void:
+	match (OS.get_name()):
+		"Linux", "macOS":
+			process_id = OS.create_process("bash", ["-c", python_cmnd_string])
+		"Windows":
+			process_id = OS.execute("cmd.exe", ["/c", python_cmnd_string])
+		_:
+			push_error("Unrecognized OS!")
 
-func start_process() -> PackedStringArray:
-	var output : PackedStringArray = []
-	var cmnd_result : int = -100
+func close_process():
+	if (process_id > 0): OS.kill(process_id)
 	
-	if (!open_console):
-		var cmnd : PackedStringArray = ["env/bin/python", python_file]
-		var cmnd_head = cmnd[0]
-		cmnd.remove_at(0)
-		cmnd_result = OS.execute(cmnd_head, cmnd, output, false)
-	else:
-		# MacOS needs a special case where it has bonus arguments at beginning to enable console
-		if (user_terminal == "x-term"):
-			var cmnd = ["-a", "Terminal", "env/bin/python"]
-			cmnd_result = OS.execute("open", cmnd, output, false)
-		
-	return output
+func _exit_tree() -> void:
+	print("Process closed!")
+	close_process()

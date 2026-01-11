@@ -4,4 +4,3 @@
 
 [node name="PyBridge" type="Node"]
 script = ExtResource("1_h6o5d")
-open_console = true
