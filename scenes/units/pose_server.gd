@@ -177,28 +177,29 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	
 	var mask_pos = $"../Mask1".position + $"../Mask1".size/2 if camera_id == 0 else $"../Mask2".position + $"../Mask2".size/2
 	
-	if Input.is_key_pressed(KEY_A):
-		pose = "place_left"
-	elif Input.is_key_pressed(KEY_S):
-		pose = "place_right"
-	elif Input.is_key_pressed(KEY_D):
-		pose = "squat"
-	elif Input.is_key_pressed(KEY_F):
-		pose = "jumping_jacks_open"
-	elif Input.is_key_pressed(KEY_G):
-		pose = "jumping_jacks_closed"
-	elif Input.is_key_pressed(KEY_H):
-		pose = "push_up_down"
-	elif Input.is_key_pressed(KEY_J):
-		pose = "push_up"
-	elif Input.is_key_pressed(KEY_K):
-		pose = "knee_up_l"
-	elif Input.is_key_pressed(KEY_L):
-		pose = "knee_up_r"
-	elif Input.is_key_pressed(KEY_Z):
-		pose = "right lunge"
-	elif Input.is_key_pressed(KEY_X):
-		pose = "left lunge"
+	if camera_id == 0:
+		if Input.is_key_pressed(KEY_A):
+			pose = "place_left"
+		elif Input.is_key_pressed(KEY_S):
+			pose = "place_right"
+		elif Input.is_key_pressed(KEY_D):
+			pose = "squat"
+		elif Input.is_key_pressed(KEY_F):
+			pose = "jumping_jacks_open"
+		elif Input.is_key_pressed(KEY_G):
+			pose = "jumping_jacks_closed"
+		elif Input.is_key_pressed(KEY_H):
+			pose = "push_up_down"
+		elif Input.is_key_pressed(KEY_J):
+			pose = "push_up"
+		elif Input.is_key_pressed(KEY_K):
+			pose = "knee_up_l"
+		elif Input.is_key_pressed(KEY_L):
+			pose = "knee_up_r"
+		elif Input.is_key_pressed(KEY_Z):
+			pose = "right lunge"
+		elif Input.is_key_pressed(KEY_X):
+			pose = "left lunge"
 	
 	var launch_particles = func(ex, amt):
 		var start_pos = mask_pos

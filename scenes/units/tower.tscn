@@ -1,12 +1,82 @@
-[gd_scene load_steps=5 format=3 uid="uid://c48rrqnuxkjm4"]
+[gd_scene load_steps=15 format=3 uid="uid://c48rrqnuxkjm4"]
 
 [ext_resource type="Texture2D" uid="uid://vlpvdgwhe256" path="res://assets/Tiny Swords (Free Pack)/Buildings/Red Buildings/Tower.png" id="1_d4mai"]
 [ext_resource type="Script" uid="uid://ch6eqv8ql25dj" path="res://scenes/units/tower.gd" id="1_d8jq7"]
 [ext_resource type="Texture2D" uid="uid://bupij1ovmj8gf" path="res://scenes/units/BigBar_Fill.png" id="3_2nwax"]
+[ext_resource type="Texture2D" uid="uid://hyfdfbrwoau0" path="res://assets/Tiny Swords (Free Pack)/Particle FX/Explosion_01.png" id="4_r815x"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_d4mai"]
 radius = 45.0
 height = 102.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_56bo4"]
+atlas = ExtResource("4_r815x")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6wrvg"]
+atlas = ExtResource("4_r815x")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xovf"]
+atlas = ExtResource("4_r815x")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ijnxg"]
+atlas = ExtResource("4_r815x")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_456ho"]
+atlas = ExtResource("4_r815x")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tj085"]
+atlas = ExtResource("4_r815x")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rg4ay"]
+atlas = ExtResource("4_r815x")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o74b6"]
+atlas = ExtResource("4_r815x")
+region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sg7ig"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_56bo4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6wrvg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5xovf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ijnxg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_456ho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tj085")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rg4ay")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o74b6")
+}],
+"loop": false,
+"name": &"tower_kaboom",
+"speed": 10.0
+}]
 
 [node name="Tower" type="Area2D"]
 position = Vector2(-1, 0)
@@ -35,6 +105,12 @@ offset_right = 64.0
 offset_bottom = 161.0
 texture = ExtResource("3_2nwax")
 expand_mode = 1
+
+[node name="ExplosionEffect" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, 5)
+scale = Vector2(3.2604167, 3.0104167)
+sprite_frames = SubResource("SpriteFrames_sg7ig")
+animation = &"tower_kaboom"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
