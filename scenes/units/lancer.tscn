@@ -343,7 +343,7 @@ height = 68.0
 script = ExtResource("1_hfulh")
 type = 3
 move_speed = 20.0
-attack = 20.0
+attack = 9.0
 total_hp = 30.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

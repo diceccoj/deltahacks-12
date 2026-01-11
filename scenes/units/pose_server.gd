@@ -177,7 +177,7 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	
 	var mask_pos = $"../Mask1".position + $"../Mask1".size/2 if camera_id == 0 else $"../Mask2".position + $"../Mask2".size/2
 	
-	if camera_id == 0 or (camera_id == 1 and Input.is_key_pressed(KEY_SHIFT)):
+	if (camera_id == 0 and not Input.is_key_pressed(KEY_SHIFT)) or (camera_id == 1 and Input.is_key_pressed(KEY_SHIFT)):
 		if Input.is_key_pressed(KEY_A):
 			pose = "place_left"
 		elif Input.is_key_pressed(KEY_S):

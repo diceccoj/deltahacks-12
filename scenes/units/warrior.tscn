@@ -301,6 +301,7 @@ height = 68.0
 script = ExtResource("1_e1lyv")
 type = 1
 move_speed = 60.0
+attack = 5.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

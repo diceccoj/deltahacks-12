@@ -421,7 +421,7 @@ radius = 121.037186
 [node name="Monk" type="CharacterBody2D"]
 script = ExtResource("1_lbf7i")
 move_speed = 150.0
-attack = 4.0
+attack = 1.0
 total_hp = 40.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

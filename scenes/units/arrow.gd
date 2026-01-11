@@ -2,7 +2,7 @@ extends Sprite2D
 class_name Arrow
 
 var team : Unit.Team
-const dmg : float = 5.0
+const dmg : float = 3.0
 var speed : float = 100.0
 
 func _ready() -> void:
