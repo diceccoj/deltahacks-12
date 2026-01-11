@@ -2,28 +2,56 @@ extends Node
 class_name PoseServer
 
 const array_size = 5
-var poses : Array = ["?"]
-var previous_frame_pose = "?"
-var server: UDPServer
-var seconds = 0
-var time = 0
 
-signal pose_changed(pose: String)
-signal exercise_detected(exercise: String)
+# Separate state for each camera
+var camera_data = {
+	0: {
+		"poses": ["?"],
+		"previous_frame_pose": "?",
+		"server": null,
+		"time": 0
+	},
+	1: {
+		"poses": ["?"],
+		"previous_frame_pose": "?",
+		"server": null,
+		"time": 0
+	}
+}
+
+# Signals now include camera_id
+signal pose_changed(camera_id: int, pose: String)
+signal exercise_detected(camera_id: int, exercise: String)
 
 func _ready() -> void:
-	server = UDPServer.new()
-	server.listen(4242)
+	# Create server for camera 0 (port 4242)
+	camera_data[0]["server"] = UDPServer.new()
+	camera_data[0]["server"].listen(4242)
+	
+	# Create server for camera 1 (port 4243)
+	camera_data[1]["server"] = UDPServer.new()
+	camera_data[1]["server"].listen(4243)
+	
 	exercise_detected.connect(my_awesome_function)
+	
+	print("Listening on ports 4242 (Camera 0) and 4243 (Camera 1)")
 
-func my_awesome_function(pose: String):
-	print(pose)
+func my_awesome_function(camera_id: int, pose: String):
+	print("Camera ", camera_id, ": ", pose)
 
 func _process(_delta: float) -> void:
+	# Process both cameras
+	process_camera(0)
+	process_camera(1)
+
+func process_camera(camera_id: int) -> void:
+	var data = camera_data[camera_id]
+	var server = data["server"]
+	
 	server.poll()
 	
 	# Keeps track of time
-	time = time + 1
+	data["time"] += 1
 		
 	if server.is_connection_available():
 		var peer = server.take_connection()
@@ -31,24 +59,27 @@ func _process(_delta: float) -> void:
 		var pose = frame_data.get_string_from_utf8()
 		
 		# Check if the new pose is different from the first element
-		if pose == previous_frame_pose && pose != poses[0]:
+		if pose == data["previous_frame_pose"] && pose != data["poses"][0]:
 			# Insert new pose at the beginning
-			poses.insert(0, pose)
+			data["poses"].insert(0, pose)
 			
-			# Cap the array size at 10
-			if poses.size() > array_size:
-				poses.resize(array_size)
+			# Cap the array size
+			if data["poses"].size() > array_size:
+				data["poses"].resize(array_size)
 			
-			pose_changed.emit(pose)
+			pose_changed.emit(camera_id, pose)
 			
-			if time > 15:
+			if data["time"] > 15:
 				# Check for completed exercises
-				check_for_exercises()
+				check_for_exercises(camera_id)
 		else:
-			previous_frame_pose = pose
+			data["previous_frame_pose"] = pose
 
-func check_for_exercises() -> void:
-	# Define exercise pairs: [start_pose, end_pose, exercise_name]
+func check_for_exercises(camera_id: int) -> void:
+	var data = camera_data[camera_id]
+	var poses = data["poses"]
+	
+	# Define exercise pairs: [start_pose, end_pose, exercise_name, alt_start_pose (optional)]
 	var exercise_pairs = [
 		["standing", "squat", "squat", "jumping_jacks_closed"],
 		["standing", "lunge", "lunge", "jumping_jacks_closed"],
@@ -72,6 +103,6 @@ func check_for_exercises() -> void:
 			# Loop through the rest of the array to find the corresponding end pose
 			for i in range(1, poses.size()):
 				if poses[i] == end_pose:
-					exercise_detected.emit(exercise_name)
-					time = 0
+					exercise_detected.emit(camera_id, exercise_name)
+					data["time"] = 0
 					return  # Exit after detecting one exercise
