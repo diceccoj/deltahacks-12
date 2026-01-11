@@ -13,10 +13,24 @@ import queue
 import struct
 
 def list_available_cameras(max_test=10):
+    """Detect all available cameras"""
     available_cameras = []
+    
+    # Determine the correct backend based on OS
+    import platform
+    system = platform.system()
+    
     for i in range(max_test):
-        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+        # Use appropriate backend for each OS
+        if system == "Windows":
+            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+        elif system == "Darwin":  # macOS
+            cap = cv2.VideoCapture(i, cv2.CAP_AVFOUNDATION)
+        else:  # Linux
+            cap = cv2.VideoCapture(i, cv2.CAP_V4L2)
+        
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        
         if cap.isOpened():
             ret, frame = cap.read()
             if ret:
@@ -26,27 +40,43 @@ def list_available_cameras(max_test=10):
                 print(f"Camera {i}: {int(width)}x{int(height)} @ {fps} FPS")
                 available_cameras.append(i)
             cap.release()
-    print("thats all the cams....")
+    
+    print(f"Found {len(available_cameras)} camera(s): {available_cameras}")
     return available_cameras
 
-list_available_cameras()
+# Detect available cameras
+available_cameras = list_available_cameras()
 
-# Global state for each camera
-camera_states = {
-    0: {'latest_result': None, 'lock': threading.Lock(), 'latest_frame': None},
-    1: {'latest_result': None, 'lock': threading.Lock(), 'latest_frame': None}
-}
+if len(available_cameras) == 0:
+    print("\nERROR: No cameras found!")
+    print("Please connect at least one camera and try again.")
+    sys.exit(1)
+
+# Use the first two available cameras (or just one if only one is available)
+camera_ids = available_cameras[:2]
+print(f"\nUsing cameras: {camera_ids}")
+
+# Global state - dynamically create based on available cameras
+camera_states = {}
 running = True
 
-screen_width = 730
-screen_height = 410
+screen_width = 1920
+screen_height = 1080
 
 SERVER_IP = "127.0.0.1"
-PORTS = {0: 4242, 1: 4243}
-sockets = {
-    0: socket.socket(socket.AF_INET, socket.SOCK_DGRAM),
-    1: socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-}
+# Dynamically assign ports based on camera IDs
+PORTS = {}
+sockets = {}
+
+for idx, cam_id in enumerate(camera_ids):
+    camera_states[cam_id] = {
+        'latest_result': None, 
+        'lock': threading.Lock(), 
+        'latest_frame': None,
+        'seg_mask': None
+    }
+    PORTS[cam_id] = 4242 + idx  # First camera: 4242, second: 4243
+    sockets[cam_id] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 BaseOptions = mp.tasks.BaseOptions
 PoseLandmarker = mp.tasks.vision.PoseLandmarker
@@ -108,7 +138,26 @@ def detect_pose(landmarks):
         else:
             l[name] = None
 
-    if not l["left_hip"] or not l["right_hip"] or not l["left_shoulder"] or not l["right_shoulder"]:
+    # normalize falsy / missing landmarks to False; invalidate landmarks with out-of-range coords
+    for name, val in list(l.items()):
+        if not val:
+            l[name] = False
+            continue
+        try:
+            x = float(val.x)
+            y = float(val.y)
+        except Exception:
+            l[name] = False
+            continue
+        
+         # valid if both x and y are between 0 and 1, with some margin
+        off_screen_margin = 0.15  # allow some margin for off-screen detection
+        if not (-off_screen_margin < x < 1 + off_screen_margin and -off_screen_margin < y < 1 + off_screen_margin):
+            l[name] = False
+    
+    if not l["left_hip"] or not l["right_hip"] or not l["left_shoulder"] or not l["right_shoulder"] or \
+       not l["left_knee"] or not l["right_knee"] or not l["left_ankle"] or not l["right_ankle"] or \
+       not l["left_wrist"] or not l["right_wrist"]:
         return "none"
 
     hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
@@ -117,23 +166,28 @@ def detect_pose(landmarks):
     shoulder_x = (l["left_shoulder"].x + l["right_shoulder"].x) / 2
     torso_height = math.sqrt((shoulder_height - hip_height) ** 2 + (shoulder_x - hip_x) ** 2)
 
-    if l["left_wrist"] and l["left_shoulder"] and l["right_wrist"] and l["right_shoulder"]:
-        torso_width = abs(l["left_shoulder"].x - l["right_shoulder"].x)
+    torso_width = abs(l["left_shoulder"].x - l["right_shoulder"].x)
+
+    # Checks if player is standing upright
+    if abs(shoulder_height - hip_height) > torso_height * 0.85:
+
+        # Detect all moves that require standing upright
+
+        # Detect side arm raises
         if torso_width > torso_height * 0.3:
             if l["left_wrist"].x < l["left_shoulder"].x and l["right_wrist"].x < l["right_shoulder"].x - torso_height * 0.4:
                 return "place_left"
             if l["left_wrist"].x > l["left_shoulder"].x + torso_height * 0.4 and l["right_wrist"].x > l["right_shoulder"].x:
                 return "place_right"
 
-    if l["left_knee"] and l["left_hip"] and l["right_knee"] and l["right_hip"]:
+        # Detect squats
         left_squat_diff = l["left_knee"].y - l["left_hip"].y
         right_squat_diff = l["right_knee"].y - l["right_hip"].y
         if abs(shoulder_height - hip_height) > torso_height * 0.75:
             if left_squat_diff < 0.1 and right_squat_diff < 0.1:
                 return "squat"
 
-    if l["left_wrist"] and l["right_wrist"] and l["left_ankle"] and l["right_ankle"] and \
-       l["right_shoulder"] and l["left_shoulder"] and l["left_hip"] and l["right_hip"]:
+        # Detect jumping jacks
         elbow_distance = abs(l["left_elbow"].x - l["right_elbow"].x)
         wrist_distance = abs(l["left_wrist"].x - l["right_wrist"].x)
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
@@ -141,7 +195,6 @@ def detect_pose(landmarks):
         right_wrist_height = l["right_wrist"].y
         left_wrist_height = l["left_wrist"].y
 
-        # Checks if elbows are wide and knees are wide
         if elbow_distance > torso_height * 0.8 and knee_distance > torso_height * 0.35:
             if wrist_distance < elbow_distance and left_wrist_height < shoulder_height and right_wrist_height < shoulder_height:
                 if left_wrist_height < l["left_ankle"].y and right_wrist_height < l["right_ankle"].y:
@@ -152,13 +205,13 @@ def detect_pose(landmarks):
                 if wrist_distance < torso_height and ankle_distance < torso_height * 0.5:
                     return "jumping_jacks_closed"
 
-    if l["left_knee"] and l["left_hip"] and l["left_ankle"] and l["right_knee"] and l["right_hip"] and l["right_ankle"]:
-        ankle_to_knee_left = abs(l["left_ankle"].y - l["left_knee"].y)
-        ankle_to_knee_right = abs(l["right_ankle"].y - l["right_knee"].y)
+        # Detect lunges
+        ankle_to_knee_left = abs(l["left_ankle"].x - l["left_knee"].x)
+        ankle_to_knee_right = abs(l["right_ankle"].x - l["right_knee"].x)
         ankle_to_ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
         torso_width = abs(l["left_shoulder"].x - l["right_shoulder"].x) + abs(l["left_hip"].x - l["right_hip"].x) / 2
 
-        if ankle_to_knee_right > torso_height * 0.1:
+        if ankle_to_knee_right > torso_height * 0.2:
             if ankle_to_ankle_distance > torso_height:
                 if torso_width < torso_height * 0.3:
                     return "right lunge"
@@ -167,38 +220,41 @@ def detect_pose(landmarks):
             if ankle_to_ankle_distance > torso_height:
                 if torso_width < torso_height * 0.3:
                     return "left lunge"
-
-    if l["left_wrist"] and l["right_wrist"] and l["left_shoulder"] and l["right_shoulder"] and \
-       l["left_hip"] and l["right_hip"] and l["left_hip"] and l["right_hip"]:
-        ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
-        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
-        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
-        wrist_height = (l["left_wrist"].y + l["right_wrist"].y) / 2
-
-        if abs(shoulder_height - hip_height) < 0.1 and abs(hip_height - ankle_height) < 0.1:
-            if abs(wrist_height - shoulder_height) < 0.2:
-                return "push_up_down"
-
-        if shoulder_height < hip_height and abs(shoulder_height - hip_height) < 0.2 and abs(hip_height - ankle_height) < 0.2:
-            if wrist_height - shoulder_height > 0.1:
-                return "push_up"
-
-    if l["left_knee"] and l["left_hip"]:
-        dist = abs(l["left_knee"].y - l["left_hip"].y)
-        if dist < 0.05:
+                    
+        # Knee ups detection (new)
+        dist = l["left_knee"].y - l["left_hip"].y
+        if dist < torso_height * 0.1:
             return "knee_up_l"
-    
-    if l["right_knee"] and l["right_hip"]:
-        dist = abs(l["right_knee"].y - l["right_hip"].y)
-        if dist < 0.05:
+
+        dist = l["right_knee"].y - l["right_hip"].y
+        if dist < torso_height * 0.1:
             return "knee_up_r"
 
-    if l["left_ankle"] and l["right_ankle"]:
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
         ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
         if ankle_distance < torso_height * 0.5:
             if abs(hip_height - ankle_height) > torso_height * 1.1:
                 return "standing"
+
+    else:
+        # Detect push-ups
+            ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
+            wrist_height = (l["left_wrist"].y + l["right_wrist"].y) / 2
+
+            ankle_x = (l["left_ankle"].x + l["right_ankle"].x) / 2
+            wrist_x = (l["left_wrist"].x + l["right_wrist"].x) / 2
+
+            wrist_to_ankle = abs(wrist_x - ankle_x)
+
+            if wrist_to_ankle > torso_height * 1.5:
+
+                if abs(shoulder_height - hip_height) < 0.1 and abs(hip_height - ankle_height) < 0.1:
+                    if abs(wrist_height - shoulder_height) < 0.2:
+                        return "push_up_down"
+
+                if shoulder_height < hip_height and abs(shoulder_height - hip_height) < 0.2 and abs(hip_height - ankle_height) < 0.2:
+                    if wrist_height - shoulder_height > 0.1:
+                        return "push_up"
 
     return "none"
 
@@ -228,9 +284,6 @@ def create_result_callback(camera_id):
     """Factory function to create callback for specific camera"""
     def result_cb(result, output_image: mp.Image, timestamp_ms: int):
         with camera_states[camera_id]['lock']:
-            #a = cv2.waitKey(1) & 0xFF
-            #if a == ord('w'): 
-            #print(result.segmentation_masks)
             camera_states[camera_id]['latest_result'] = result
     return result_cb
 
@@ -247,7 +300,17 @@ def process_camera(camera_id):
     """Process a single camera in a separate thread (NO cv2.imshow here)"""
     global running
     
-    cap = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+    # Determine the correct backend based on OS
+    import platform
+    system = platform.system()
+    
+    if system == "Windows":
+        cap = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+    elif system == "Darwin":  # macOS
+        cap = cv2.VideoCapture(camera_id, cv2.CAP_AVFOUNDATION)
+    else:  # Linux
+        cap = cv2.VideoCapture(camera_id, cv2.CAP_V4L2)
+    
     if not cap.isOpened():
         print(f"Error: Could not open camera {camera_id}")
         return
@@ -260,7 +323,7 @@ def process_camera(camera_id):
     
     try:
         with PoseLandmarker.create_from_options(options) as landmarker:
-            print(f"Camera {camera_id} processing started")
+            print(f"Camera {camera_id} processing started (Port: {PORTS[camera_id]})")
             counter = 0
             
             while running:
@@ -293,30 +356,27 @@ def process_camera(camera_id):
                         for pose in landmarks:
                             pose_str = detect_pose(pose)
     
-
-                # Add camera ID and pose to display - smaller, nicer font
+                # Add camera ID and pose to display
                 cv2.putText(annotated_frame, f"Camera {camera_id}: {pose_str}",
                            (5, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 100, 0), 3)
                 cv2.putText(annotated_frame, "Press 'q' or ESC to exit",
                            (5, annotated_frame.shape[0] - 15),
                            cv2.FONT_HERSHEY_DUPLEX, 0.7, (100, 200, 255), 2)
-                
 
-
-                # Store the processed frame (don't display here!)
+                # Store the processed frame
                 with camera_states[camera_id]['lock']:
                     camera_states[camera_id]['latest_frame'] = cv2.resize(annotated_frame, (screen_width, screen_height))
                     camera_states[camera_id]['seg_mask'] = seg_masks
 
+                # Send segmentation mask
                 seg_success, seg_encoded = encode_seg_mask(seg_masks)
-
                 if seg_success:
                     mask_bytes = seg_encoded.tobytes()
                     header = b'MASK' + struct.pack('I', len(mask_bytes))
                     mask_port = PORTS[camera_id] + 100  # e.g., 4342, 4343
                     sockets[camera_id].sendto(header + mask_bytes, (SERVER_IP, mask_port))
 
-                # Send to different port for each camera
+                # Send pose data
                 if len(pose_str) <= 65507:
                     sockets[camera_id].sendto(
                         pose_str.encode('utf-8'), 
@@ -331,76 +391,69 @@ def process_camera(camera_id):
 def main():
     global running
     
-    print("\n=== DUAL CAMERA POSE DETECTION ===")
-    print("Camera 0 -> Port 4242")
-    print("Camera 1 -> Port 4243")
+    print("\n=== POSE DETECTION ===")
+    for cam_id in camera_ids:
+        print(f"Camera {cam_id} -> Port {PORTS[cam_id]} (Mask: {PORTS[cam_id] + 100})")
     print("\nEXIT OPTIONS:")
     print("- Press 'q' to quit")
     print("- Press 'ESC' to quit")
     print("- Press Ctrl+C to quit")
     print("- Click X on any window to quit")
-    print("===================================\n")
+    print("======================\n")
     
-    # Create threads for each camera
-    thread0 = threading.Thread(target=process_camera, args=(0,), daemon=True)
-    thread1 = threading.Thread(target=process_camera, args=(1,), daemon=True)
+    # Create threads for each available camera
+    threads = []
+    for cam_id in camera_ids:
+        thread = threading.Thread(target=process_camera, args=(cam_id,), daemon=True)
+        thread.start()
+        threads.append(thread)
     
-    # Start both threads
-    thread0.start()
-    thread1.start()
-    
-    # Main thread handles display (cv2.imshow must be in main thread)
-    window0 = "Camera 0"
-    window1 = "Camera 1"
-    
-    # Create windows and position them side by side
-    cv2.namedWindow(window0, cv2.WINDOW_NORMAL)
-    cv2.namedWindow(window1, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window0, screen_width, screen_height)
-    cv2.resizeWindow(window1, screen_width, screen_height)
-    cv2.moveWindow(window0, 0, 0)  # Left window
-    cv2.moveWindow(window1, screen_width + 10, 0)  # Right window, with small gap
+    # Create windows for display
+    windows = {}
+    for idx, cam_id in enumerate(camera_ids):
+        window_name = f"Camera {cam_id}"
+        windows[cam_id] = window_name
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, screen_width, screen_height)
+        # Position windows side by side
+        cv2.moveWindow(window_name, idx * (screen_width + 10), 0)
     
     try:
         while running:
-            # Get latest frames from both cameras
-            frame0 = None
-            frame1 = None
-            segmask0 = None
-            segmask1 = None
+            # Display all camera feeds
+            for cam_id in camera_ids:
+                with camera_states[cam_id]['lock']:
+                    if camera_states[cam_id]['latest_frame'] is not None:
+                        frame = camera_states[cam_id]['latest_frame'].copy()
+                        cv2.imshow(windows[cam_id], frame)
             
-            with camera_states[0]['lock']:
-                if camera_states[0]['latest_frame'] is not None:
-                    frame0 = camera_states[0]['latest_frame'].copy()
-                    segmask0 = camera_states[0]['seg_mask']
-            
-            with camera_states[1]['lock']:
-                if camera_states[1]['latest_frame'] is not None:
-                    frame1 = camera_states[1]['latest_frame'].copy()
-                    #segmask1 = camera_states[1]['seg_mask'].copy()
-
-            # Display frames
-            if frame0 is not None:
-                cv2.imshow(window0, frame0)#segmask0[0].numpy_view())
-            if frame1 is not None:
-                cv2.imshow(window1, frame1)
+            # Close windows for cameras that aren't being used
+            # This handles the case where we have fewer cameras than expected
+            all_possible_cameras = list(range(10))
+            for cam_id in all_possible_cameras:
+                if cam_id not in camera_ids:
+                    window_name = f"Camera {cam_id}"
+                    try:
+                        # Try to destroy the window if it exists
+                        cv2.destroyWindow(window_name)
+                    except:
+                        pass
             
             # Check for exit keys
             key = cv2.waitKey(1) & 0xFF
-            if key == ord("q") or key == 27:  # q or ESC
+            if key == ord("q") or key == 27:
                 print("\nExiting...")
                 running = False
                 break
             
-            # Check if windows were closed
+            # Check if any window was closed
             try:
-                if cv2.getWindowProperty(window0, cv2.WND_PROP_VISIBLE) < 1 or \
-                   cv2.getWindowProperty(window1, cv2.WND_PROP_VISIBLE) < 1:
-                    print("\nWindow closed, exiting...")
-                    running = False
-                    break
+                for window_name in windows.values():
+                    if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
+                        print("\nWindow closed, exiting...")
+                        running = False
+                        break
             except:
-                # Window might not exist yet
                 pass
                 
     except KeyboardInterrupt:
@@ -408,9 +461,9 @@ def main():
         running = False
     finally:
         cv2.destroyAllWindows()
-        # Give threads time to clean up
-        thread0.join(timeout=2)
-        thread1.join(timeout=2)
+        # Wait for all threads to finish
+        for thread in threads:
+            thread.join(timeout=2)
         print("All cameras shut down")
 
 if __name__ == "__main__":

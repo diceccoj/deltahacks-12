@@ -1,6 +1,5 @@
-[gd_scene load_steps=107 format=3 uid="uid://dkjodo2hi5yqp"]
+[gd_scene load_steps=109 format=3 uid="uid://dkjodo2hi5yqp"]
 
-[ext_resource type="Script" uid="uid://tti6b7mc8te4" path="res://scenes/camera_stream/camera_stream.gd" id="1_j600m"]
 [ext_resource type="Texture2D" uid="uid://bnijma11d2m6w" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Swords/Swords.png" id="2_2teyd"]
 [ext_resource type="Texture2D" uid="uid://b0gqniv5chvsy" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color5.png" id="3_mfwet"]
 [ext_resource type="Texture2D" uid="uid://3vuokwiauvqu" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Water Background color.png" id="4_8c88m"]
@@ -1141,7 +1140,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
-script = ExtResource("1_j600m")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -5)
