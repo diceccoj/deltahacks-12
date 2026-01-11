@@ -9,12 +9,14 @@ var camera_data = {
 		"poses": ["?"],
 		"previous_frame_pose": "?",
 		"server": null,
+		"mask_server": null,
 		"time": 0
 	},
 	1: {
 		"poses": ["?"],
 		"previous_frame_pose": "?",
 		"server": null,
+		"mask_server": null,
 		"time": 0
 	}
 }
@@ -22,6 +24,8 @@ var camera_data = {
 # Signals now include camera_id
 signal pose_changed(camera_id: int, pose: String)
 signal exercise_detected(camera_id: int, exercise: String)
+signal mask_updated(camera_id: int, texture: ImageTexture)
+
 
 func _ready() -> void:
 	# Create server for camera 0 (port 4242)
@@ -31,6 +35,12 @@ func _ready() -> void:
 	# Create server for camera 1 (port 4243)
 	camera_data[1]["server"] = UDPServer.new()
 	camera_data[1]["server"].listen(4243)
+	
+	camera_data[0]["mask_server"] = UDPServer.new()
+	camera_data[0]["mask_server"].listen(4342)
+	
+	camera_data[1]["mask_server"] = UDPServer.new()
+	camera_data[1]["mask_server"].listen(4343)
 	
 	exercise_detected.connect(my_awesome_function)
 	
@@ -74,6 +84,25 @@ func process_camera(camera_id: int) -> void:
 				check_for_exercises(camera_id)
 		else:
 			data["previous_frame_pose"] = pose
+	
+	var mask_server = data["mask_server"]
+	mask_server.poll()
+	
+	if mask_server.is_connection_available():
+		var peer = mask_server.take_connection()
+		var packet = peer.get_packet()
+		if packet.size() > 8:
+			var header = packet.slice(0, 4).get_string_from_ascii()
+			if header == "MASK":
+				var image_data = packet.slice(8)
+				var image = Image.new()
+				var error = image.load_png_from_buffer(image_data)
+				if error == OK:
+					var texture = ImageTexture.create_from_image(image)
+					data["mask_texture"] = texture
+					mask_updated.emit(camera_id, texture)
+
+
 
 func check_for_exercises(camera_id: int) -> void:
 	var data = camera_data[camera_id]

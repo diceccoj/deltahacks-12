@@ -1,4 +1,4 @@
-[gd_scene load_steps=95 format=3 uid="uid://b4sw2qtpxp4h0"]
+[gd_scene load_steps=99 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
 [ext_resource type="PackedScene" uid="uid://b345cshf836o5" path="res://scenes/units/warrior.tscn" id="2_nccru"]
@@ -48,6 +48,7 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
+[ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_q8s32"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1053,6 +1054,14 @@ sources/43 = SubResource("TileSetAtlasSource_xaikh")
 [sub_resource type="LabelSettings" id="LabelSettings_ma1vy"]
 font_size = 32
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0pva5"]
+shader = ExtResource("49_q8s32")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_br54j"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q8s32"]
+shader = ExtResource("49_q8s32")
+
 [node name="Battlefield" type="Node2D"]
 script = ExtResource("1_ma1vy")
 
@@ -1115,4 +1124,22 @@ position = Vector2(835, 237)
 [node name="RBot" type="Marker2D" parent="."]
 position = Vector2(835, 318)
 
+[node name="Mask1" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_0pva5")
+offset_top = 498.0
+offset_right = 200.0
+offset_bottom = 648.0
+texture = SubResource("PlaceholderTexture2D_br54j")
+expand_mode = 2
+
+[node name="Mask2" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_q8s32")
+offset_left = 952.0
+offset_top = 498.0
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = SubResource("PlaceholderTexture2D_br54j")
+expand_mode = 2
+
+[connection signal="mask_updated" from="P1Pose" to="." method="_on_p_1_pose_mask_updated"]
 [connection signal="pose_changed" from="P1Pose" to="." method="_on_p_1_pose_pose_changed"]
