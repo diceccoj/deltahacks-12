@@ -116,10 +116,12 @@ def detect_pose(landmarks):
         elbow_distance = abs(l["left_elbow"].x - l["right_elbow"].x)
         wrist_distance = abs(l["left_wrist"].x - l["right_wrist"].x)
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
+        knee_distance = abs(l["left_knee"].x - l["right_knee"].x)
         right_wrist_height = l["right_wrist"].y
         left_wrist_height = l["left_wrist"].y
 
-        if elbow_distance > torso_height * 0.8 and ankle_distance > torso_height * 0.65:
+        # Checks if elbows are wide and knees are wide
+        if elbow_distance > torso_height * 0.8 and knee_distance > torso_height * 0.35:
             if wrist_distance < elbow_distance and left_wrist_height < shoulder_height and right_wrist_height < shoulder_height:
                 if left_wrist_height < l["left_ankle"].y and right_wrist_height < l["right_ankle"].y:
                     return "jumping_jacks_open"
