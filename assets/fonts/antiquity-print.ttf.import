@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://dnsx6cpgwxjxw"
-path="res://.godot/imported/ThaleahFat.ttf-55884ee56c0be34376b8ef3f70ede83b.fontdata"
+uid="uid://c6ggf0jh7hf7i"
+path="res://.godot/imported/antiquity-print.ttf-929e51cd2ba6ff1c92486a6cad582189.fontdata"
 
 [deps]
 
-source_file="res://assets/ThaleahFat.ttf"
-dest_files=["res://.godot/imported/ThaleahFat.ttf-55884ee56c0be34376b8ef3f70ede83b.fontdata"]
+source_file="res://assets/fonts/antiquity-print.ttf"
+dest_files=["res://.godot/imported/antiquity-print.ttf-929e51cd2ba6ff1c92486a6cad582189.fontdata"]
 
 [params]
 

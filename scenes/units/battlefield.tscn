@@ -1,4 +1,4 @@
-[gd_scene load_steps=102 format=3 uid="uid://b4sw2qtpxp4h0"]
+[gd_scene load_steps=104 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
 [ext_resource type="Texture2D" uid="uid://00hiefi5h6i8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Shadow.png" id="2_q8s32"]
@@ -52,7 +52,9 @@
 [ext_resource type="PackedScene" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
 [ext_resource type="Texture2D" uid="uid://do23o2gdoxaw6" path="res://assets/oaqarvlq.png" id="51_0pnp1"]
 [ext_resource type="Texture2D" uid="uid://djljgbhd4v37q" path="res://assets/yscgq80u.png" id="52_0pnp1"]
+[ext_resource type="Texture2D" uid="uid://dk4rwudrdy6c2" path="res://xl9bh8w3.png" id="53_pt8d2"]
 [ext_resource type="Script" path="res://scenes/units/particles.gd" id="53_s7b68"]
+[ext_resource type="Texture2D" uid="uid://d0tnfq5kqnfu4" path="res://assets/46v3pwvt.png" id="54_ix71i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1179,6 +1181,32 @@ offset_bottom = 381.0
 [node name="TextureRect" parent="P1Meter/PushUp/Panel" index="1"]
 texture = ExtResource("52_0pnp1")
 
+[node name="KneeUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 300.0
+offset_top = 386.0
+offset_right = 300.0
+offset_bottom = 386.0
+
+[node name="Progress" parent="P1Meter/KneeUp/Panel" index="0"]
+z_index = 1
+
+[node name="TextureRect" parent="P1Meter/KneeUp/Panel" index="1"]
+texture = ExtResource("53_pt8d2")
+
+[node name="Lunge" parent="P1Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 385.0
+offset_top = 434.0
+offset_right = 385.0
+offset_bottom = 434.0
+
+[node name="Progress" parent="P1Meter/Lunge/Panel" index="0"]
+z_index = 1
+
+[node name="TextureRect" parent="P1Meter/Lunge/Panel" index="1"]
+texture = ExtResource("54_ix71i")
+
 [node name="P2Meter" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
@@ -1213,13 +1241,45 @@ offset_bottom = 381.0
 [node name="TextureRect" parent="P2Meter/PushUp/Panel" index="1"]
 texture = ExtResource("52_0pnp1")
 
+[node name="KneeUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 300.0
+offset_top = 386.0
+offset_right = 300.0
+offset_bottom = 386.0
+
+[node name="Progress" parent="P2Meter/KneeUp/Panel" index="0"]
+z_index = 1
+
+[node name="TextureRect" parent="P2Meter/KneeUp/Panel" index="1"]
+texture = ExtResource("53_pt8d2")
+
+[node name="Lunge" parent="P2Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 116.0
+offset_top = 432.0
+offset_right = 116.0
+offset_bottom = 432.0
+
+[node name="Progress" parent="P2Meter/Lunge/Panel" index="0"]
+z_index = 1
+
+[node name="TextureRect" parent="P2Meter/Lunge/Panel" index="1"]
+texture = ExtResource("54_ix71i")
+
 [node name="Particles" type="Node2D" parent="."]
 script = ExtResource("53_s7b68")
 particle_color = Color(1, 0.90588236, 0.2901961, 1)
 
 [connection signal="completed_exercise" from="Poses" to="." method="_on_poses_completed_exercise"]
+[connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
+[connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
 
 [editable path="P1Meter/JJ"]
 [editable path="P1Meter/PushUp"]
+[editable path="P1Meter/KneeUp"]
+[editable path="P1Meter/Lunge"]
 [editable path="P2Meter/JJ"]
 [editable path="P2Meter/PushUp"]
+[editable path="P2Meter/KneeUp"]
+[editable path="P2Meter/Lunge"]
