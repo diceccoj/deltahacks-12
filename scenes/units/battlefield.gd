@@ -8,14 +8,18 @@ class_name Battlefield
 @onready var red_start_pos: Marker2D = $LMid
 @onready var blue_start_pos: Marker2D = $RMid
 
+@onready var py_bridge: PyBridge = $PyBridge
+@onready var pose_server: PoseServer = $Poses
+
+
 enum Lane {Left, Right}
 
 var units_lib : Dictionary[Unit.Type, PackedScene] = {
 	Unit.Type.WARRIOR: preload("uid://b345cshf836o5"),
 	Unit.Type.ARCHER: preload("uid://bknltwirfyy0p"),
 	Unit.Type.PAWN: preload("res://scenes/units/pawn.tscn"),
-	Unit.Type.LANCER: preload("res://scenes/units/lancer.tscn")
-	#Unit.Type.MONK: preload("uid://clpn1t4f5kxh2"), may not be needed
+	Unit.Type.LANCER: preload("res://scenes/units/lancer.tscn"),
+	Unit.Type.MONK: preload("uid://clpn1t4f5kxh2")
 }
 
 var positions_lib: Dictionary[Unit.Team, Dictionary]
@@ -34,7 +38,7 @@ func _ready() -> void:
 		}
 	}
 	
-
+	py_bridge.start_process()
 
 func spawn_unit(type: Unit.Type, team: Unit.Team, lane: Lane):
 	# initiate unit
@@ -73,3 +77,24 @@ func _on_p_1_pose_mask_updated(camera_id: int, texture: ImageTexture) -> void:
 		$Mask1.texture = texture
 	else:
 		$Mask2.texture = texture
+
+
+func _on_poses_completed_exercise(player: int, exercise: PoseServer.Exercise, left_lane: bool) -> void:
+	var team : Unit.Team = Unit.Team.Red if player == 0 else Unit.Team.Blue
+	var lane : Lane = Lane.Left if left_lane else Lane.Right
+	
+	# determine unit type based on exercise
+	var type : Unit.Type
+	match exercise:
+		PoseServer.Exercise.SQUAT:
+			type = Unit.Type.ARCHER
+		PoseServer.Exercise.JJ:
+			type = Unit.Type.LANCER
+		PoseServer.Exercise.PUSH_UP:
+			type = Unit.Type.LANCER
+		PoseServer.Exercise.KNEE_UP:
+			type = Unit.Type.MONK
+		PoseServer.Exercise.LUNGE:
+			type = Unit.Type.PAWN
+	
+	spawn_unit(type, team, lane)

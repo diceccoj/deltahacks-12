@@ -47,12 +47,12 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
-[ext_resource type="Script" uid="uid://ch55nbyp1am13" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
-[ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
-[ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
+[ext_resource type="PackedScene" uid="uid://vtieh1nclqb3" path="res://python/py_bridge.tscn" id="48_pt8d2"]
+[ext_resource type="Shader" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
+[ext_resource type="PackedScene" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
 [ext_resource type="Texture2D" uid="uid://do23o2gdoxaw6" path="res://assets/oaqarvlq.png" id="51_0pnp1"]
 [ext_resource type="Texture2D" uid="uid://djljgbhd4v37q" path="res://assets/yscgq80u.png" id="52_0pnp1"]
-[ext_resource type="Script" uid="uid://efqlp1ri71sy" path="res://scenes/units/particles.gd" id="53_s7b68"]
+[ext_resource type="Script" path="res://scenes/units/particles.gd" id="53_s7b68"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1088,6 +1088,8 @@ position = Vector2(118, 122)
 position = Vector2(908, 117)
 team = 1
 
+[node name="PyBridge" parent="." instance=ExtResource("48_pt8d2")]
+
 [node name="Poses" type="Node" parent="."]
 script = ExtResource("4_thxjy")
 
@@ -1105,28 +1107,24 @@ text = "no pose"
 label_settings = SubResource("LabelSettings_ma1vy")
 
 [node name="LMid" type="Marker2D" parent="."]
-position = Vector2(208, 280)
+position = Vector2(151, 175)
 
 [node name="RMid" type="Marker2D" parent="."]
-position = Vector2(928, 280)
+position = Vector2(871, 175)
 
 [node name="LTop" type="Marker2D" parent="."]
-position = Vector2(208, 248)
+position = Vector2(151, 143)
 
 [node name="LBot" type="Marker2D" parent="."]
-position = Vector2(208, 320)
+position = Vector2(151, 215)
 
 [node name="RTop" type="Marker2D" parent="."]
-position = Vector2(928, 240)
+position = Vector2(871, 135)
 
 [node name="RBot" type="Marker2D" parent="."]
-position = Vector2(928, 320)
+position = Vector2(871, 215)
 
 [node name="UnitBucket" type="Node" parent="."]
-
-[node name="CouchPotato" type="Node" parent="." node_paths=PackedStringArray("battlefield")]
-script = ExtResource("48_br54j")
-battlefield = NodePath("..")
 
 [node name="Mask1" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_q8s32")
@@ -1219,8 +1217,7 @@ texture = ExtResource("52_0pnp1")
 script = ExtResource("53_s7b68")
 particle_color = Color(1, 0.90588236, 0.2901961, 1)
 
-[connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
-[connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
+[connection signal="completed_exercise" from="Poses" to="." method="_on_poses_completed_exercise"]
 
 [editable path="P1Meter/JJ"]
 [editable path="P1Meter/PushUp"]
