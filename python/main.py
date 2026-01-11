@@ -4,11 +4,14 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import math
+import signal
+import sys
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 latest_result = None
 result_lock = threading.Lock()
+running = True  # Global flag to control the main loop
 
 screen_width = 1920
 screen_height = 1080
@@ -72,6 +75,25 @@ POSE_CONNECTIONS = [
     (26, 28)   # right_knee to right_ankle
 ]
 
+def signal_handler(sig, frame):
+    """Handle Ctrl+C gracefully"""
+    global running
+    print("\n\nExiting gracefully...")
+    running = False
+    cleanup()
+    sys.exit(0)
+
+def cleanup():
+    """Clean up resources"""
+    print("Cleaning up resources...")
+    cv2.destroyAllWindows()
+    cap.release()
+    client_socket.close()
+    print("Cleanup complete!")
+
+# Register the signal handler for Ctrl+C
+signal.signal(signal.SIGINT, signal_handler)
+
 def detect_pose(landmarks):
     l = {}
     for name, idx in IDXS.items():
@@ -113,7 +135,7 @@ def detect_pose(landmarks):
 
         # Checks if chest is upright
         if abs(shoulder_height - hip_height) > torso_height * 0.75:
-            if left_squat_diff < 0.1 and right_squat_diff < 0.1:
+            if left_squat_diff < torso_height * 0.3 and right_squat_diff < torso_height * 0.3:
                 return "squat"
 
     # Jumping Jacks
@@ -125,9 +147,6 @@ def detect_pose(landmarks):
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
         right_wrist_height = l["right_wrist"].y
         left_wrist_height = l["left_wrist"].y
-
-        # print(f"wrist_distance={wrist_distance:.4f}, ankle_distance={ankle_distance:.4f}, torso_height={torso_height:.4f}")
-        # sys.stdout.flush()
 
         # checks if elbows are out and ankles are apart
         if elbow_distance > torso_height * 0.8 and ankle_distance > torso_height * 0.65:
@@ -159,13 +178,13 @@ def detect_pose(landmarks):
         if ankle_to_knee_right > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
                 if torso_width < torso_height * 0.3:
-                    return "right lunge"
+                    return "lunge"
             
         # Left Lunge
         if ankle_to_knee_left > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
                 if torso_width < torso_height * 0.3:
-                    return "left lunge"
+                    return "lunge"
             
         
     # Push-up
@@ -245,11 +264,6 @@ def draw_landmarks(rgb_image, detection_result):
             cx = int(landmark.x * annotated_image.shape[1])
             cy = int(landmark.y * annotated_image.shape[0])
             cv2.circle(annotated_image, (cx, cy), 4, (0, 0, 255), -1)
-            
-            # # Draw coordinates above and to the left
-            # coord_text = f"({landmark.x:.2f},{landmark.y:.2f},{landmark.z:.2f})"
-            # cv2.putText(annotated_image, coord_text, (cx - 10, cy - 10),
-            #            cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5)
     return annotated_image
 
 
@@ -264,72 +278,85 @@ options = PoseLandmarkerOptions(
     result_callback=result_cb)
 
 print("done initializing options!")
+print("\n=== EXIT OPTIONS ===")
+print("Press 'q' to quit")
+print("Press 'ESC' to quit")
+print("Press Ctrl+C to quit")
+print("Click the X on the window to quit")
+print("====================\n")
 
-with PoseLandmarker.create_from_options(options) as landmarker:
-    print(f"Landmarker: {landmarker}")
-    counter = 0
-    while True:
-        counter += 33
-        ret, frame = cap.read()
+try:
+    with PoseLandmarker.create_from_options(options) as landmarker:
+        print(f"Landmarker: {landmarker}")
+        counter = 0
+        while running:
+            counter += 33
+            ret, frame = cap.read()
 
-        if not ret:
-            print("Error: failed to capture image")
-            break
+            if not ret:
+                print("Error: failed to capture image")
+                break
 
-        frame = cv2.resize(frame, (1200, 900))
-        frame = cv2.flip(frame, 1)
+            frame = cv2.resize(frame, (1200, 900))
+            frame = cv2.flip(frame, 1)
 
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-        landmarker.detect_async(mp_image, counter)
+            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+            landmarker.detect_async(mp_image, counter)
 
-        annotated_frame = frame.copy()
-        pose_str = "?"
-        with result_lock:
-            if latest_result and latest_result.pose_landmarks:
-                annotated_frame = draw_landmarks(annotated_frame, latest_result)
-        
-                landmarks = latest_result.pose_landmarks
-                for pose_idx, pose in enumerate(landmarks):
-                #     print(f"\n--- Pose {pose_idx} ---")
-                    
-                #     for idx, landmark in enumerate(pose):
-                #         if idx in LANDMARK_NAMES.keys():
-                #             name = LANDMARK_NAMES[idx] if idx < len(LANDMARK_NAMES) else f"landmark_{idx}"
-                #             print(f"{name:25} ({landmark.x:6.2f}, {landmark.y:6.2f}, {landmark.z:6.2f})")
-                
-                    pose_str = detect_pose(pose)
-                    # print(pose_str)
+            annotated_frame = frame.copy()
+            pose_str = "?"
+            with result_lock:
+                if latest_result and latest_result.pose_landmarks:
+                    annotated_frame = draw_landmarks(annotated_frame, latest_result)
+            
+                    landmarks = latest_result.pose_landmarks
+                    for pose_idx, pose in enumerate(landmarks):
+                        pose_str = detect_pose(pose)
 
-        cv2.putText(
-            annotated_frame,
-            pose_str,
-            (5, 60),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            4,
-            (255, 0, 0),
-            10,
-        )
+            cv2.putText(
+                annotated_frame,
+                pose_str,
+                (5, 60),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                2,
+                (255, 0, 0),
+                10,
+            )
 
-        image = cv2.resize(annotated_frame, (screen_width, screen_height))
+            # Add exit instructions on screen
+            cv2.putText(
+                annotated_frame,
+                "Press 'q' or ESC to exit",
+                (5, annotated_frame.shape[0] - 20),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 255, 255),
+                2,
+            )
 
-        _, encoded_image = cv2.imencode(".jpg", cv2.resize(annotated_frame, (screen_width, screen_height)))
+            image = cv2.resize(annotated_frame, (screen_width, screen_height))
 
+            _, encoded_image = cv2.imencode(".jpg", cv2.resize(annotated_frame, (screen_width, screen_height)))
 
+            if len(pose_str) <= 65507:
+                client_socket.sendto(pose_str.encode('utf-8'), (SERVER_IP, SERVER_PORT))
+            else:
+                print("Frame too large, skipping")
 
-        if len(pose_str) <= 65507:
-            client_socket.sendto(pose_str.encode('utf-8'), (SERVER_IP, SERVER_PORT))
-        else:
-            print("Frame too large, skipping")
+            cv2.imshow("Image", image)
 
-        cv2.imshow("Image", image)
+            # Check for multiple exit keys
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q") or key == 27:  # 27 is ESC key
+                print("\nExiting...")
+                break
+            
+            # Check if window was closed
+            if cv2.getWindowProperty("Image", cv2.WND_PROP_VISIBLE) < 1:
+                print("\nWindow closed, exiting...")
+                break
 
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-
-        
-
-cv2.destroyAllWindows()
-
-cap.release()
-
-
+except KeyboardInterrupt:
+    print("\n\nKeyboard interrupt detected...")
+finally:
+    cleanup()

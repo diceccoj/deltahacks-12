@@ -5,3 +5,5 @@ extends Node2D
 
 func _ready() -> void:
 	py_bridge.start_process()
+
+#func _process(delta: float) -> void:
