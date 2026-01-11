@@ -84,13 +84,73 @@ def detect_pose(landmarks):
             return "squat"
 
     # Jumping Jacks
+    if l["left_wrist"] and l["right_wrist"] and l["left_ankle"] and l["right_ankle"] and \
+       l["right_shoulder"] and l["left_shoulder"] and l["left_hip"] and l["right_hip"]:
 
-    #if l["left_wrist"]
+        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
+        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
+        torso_height = abs(shoulder_height - hip_height)
+        elbow_distance = abs(l["left_elbow"].x - l["right_elbow"].x)
+        wrist_distance = abs(l["left_wrist"].x - l["right_wrist"].x)
+        ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
+        right_wrist_height = l["right_wrist"].y
+        left_wrist_height = l["left_wrist"].y
+
+        # print(f"wrist_distance={wrist_distance:.4f}, ankle_distance={ankle_distance:.4f}, torso_height={torso_height:.4f}")
+        # sys.stdout.flush()
+
+        # checks if elbows are out and ankles are apart
+        if elbow_distance > torso_height * 0.8 and ankle_distance > torso_height * 0.65:
+            # checks if wrists are closer than elbows and above nose height
+            if wrist_distance < elbow_distance and left_wrist_height < shoulder_height and right_wrist_height < shoulder_height:
+                # check if wrists are above ankles
+                if left_wrist_height < l["left_ankle"].y and right_wrist_height < l["right_ankle"].y:
+                    return "jumping_jacks_open"
+
+        # checks if wrists are below hips
+        if left_wrist_height > hip_height - torso_height * 0.2 and right_wrist_height > hip_height - torso_height * 0.2:
+            # checks if wrists are above ankles
+            if left_wrist_height < l["left_ankle"].y and right_wrist_height < l["right_ankle"].y:
+                # checks if wrists and ankles are close together
+                if wrist_distance < torso_height and ankle_distance < torso_height * 0.5:
+                    return "jumping_jacks_closed"
+                
+    # Lunges
+    if l["left_knee"] and l["left_hip"] and l["left_ankle"] and l["right_knee"] and l["right_hip"] and l["right_ankle"]:
+
+        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
+        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
+        torso_height = abs(shoulder_height - hip_height)
+
+        ankle_to_knee_left = abs(l["left_ankle"].y - l["left_knee"].y)
+        ankle_to_knee_right = abs(l["right_ankle"].y - l["right_knee"].y)
+
+        ankle_to_ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
+
+        # Right Lunge
+        if ankle_to_knee_right > torso_height * 0.5:
+            if ankle_to_ankle_distance > torso_height:
+                return "right lunge"
+            
+        # Left Lunge
+        if ankle_to_knee_left > torso_height * 0.5:
+            if ankle_to_ankle_distance > torso_height:
+                return "left lunge"
+            
+        
+    # Push-up
+    if l["left_wrist"] and l["right_wrist"] and l["left_shoulder"] and l["right_shoulder"] and \
+       l["left_hip"] and l["right_hip"]:
+        
+        wrist_height = (l["left_wrist"].y + l["right_wrist"].y) / 2
+        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
+        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
+
+        if wrist_height < shoulder_height + 0.1 and hip_height < shoulder_height + 0.2:
+            return "push-up"
 
 
-    # 
-
-
+    # No recognized pose
     return "none"
 
 def draw_landmarks(rgb_image, detection_result):
@@ -117,10 +177,10 @@ def draw_landmarks(rgb_image, detection_result):
             cy = int(landmark.y * annotated_image.shape[0])
             cv2.circle(annotated_image, (cx, cy), 4, (0, 0, 255), -1)
             
-            # Draw coordinates above and to the left
-            coord_text = f"({landmark.x:.2f},{landmark.y:.2f},{landmark.z:.2f})"
-            cv2.putText(annotated_image, coord_text, (cx - 10, cy - 10),
-                       cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5)
+            # # Draw coordinates above and to the left
+            # coord_text = f"({landmark.x:.2f},{landmark.y:.2f},{landmark.z:.2f})"
+            # cv2.putText(annotated_image, coord_text, (cx - 10, cy - 10),
+            #            cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 5)
     return annotated_image
 
 
@@ -130,7 +190,7 @@ def result_cb(result, output_image: mp.Image, timestamp_ms: int):
         latest_result = result
 
 options = PoseLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path="pose_landmarker_lite.task"),
+    base_options=BaseOptions(model_asset_path="pose_landmarker_heavy.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=result_cb)
 
@@ -138,7 +198,9 @@ print("done initializing options!")
 
 with PoseLandmarker.create_from_options(options) as landmarker:
     print(f"Landmarker: {landmarker}")
+    counter = 0
     while True:
+        counter += 33
         ret, frame = cap.read()
 
         if not ret:
@@ -149,7 +211,7 @@ with PoseLandmarker.create_from_options(options) as landmarker:
         frame = cv2.flip(frame, 1)
 
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-        landmarker.detect_async(mp_image, int(cap.get(cv2.CAP_PROP_POS_MSEC)))
+        landmarker.detect_async(mp_image, counter)
 
         annotated_frame = frame.copy()
         pose_str = "?"
@@ -167,7 +229,7 @@ with PoseLandmarker.create_from_options(options) as landmarker:
                 #             print(f"{name:25} ({landmark.x:6.2f}, {landmark.y:6.2f}, {landmark.z:6.2f})")
                 
                     pose_str = detect_pose(pose)
-                    print(pose_str)
+                    # print(pose_str)
 
         cv2.putText(
             annotated_frame,
