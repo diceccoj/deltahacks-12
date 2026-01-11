@@ -35,3 +35,6 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.team != team:
 			body.push_back()
 			body.attack_tower(self)
+	if body is Monk:
+		if body.team != team:
+			body.kaboom()

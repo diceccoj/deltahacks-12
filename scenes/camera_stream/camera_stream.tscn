@@ -45,7 +45,7 @@
 [ext_resource type="Texture2D" uid="uid://cehal5mxn1g3c" path="res://assets/Tiny Swords (Free Pack)/Terrain/Resources/Tools/Tool_02.png" id="38_0rhos"]
 [ext_resource type="Texture2D" uid="uid://dast1cmhxhaib" path="res://assets/Tiny Swords (Free Pack)/Terrain/Resources/Tools/Tool_03.png" id="39_7el4l"]
 [ext_resource type="Texture2D" uid="uid://csx3y3x8kebi8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Resources/Tools/Tool_04.png" id="40_aopae"]
-[ext_resource type="Script" uid="uid://dy2oinrb1vccp" path="res://scenes/endscreen.gd" id="46_j385u"]
+[ext_resource type="Script" path="res://scenes/endscreen.gd" id="46_j385u"]
 [ext_resource type="FontFile" uid="uid://c6ggf0jh7hf7i" path="res://assets/fonts/antiquity-print.ttf" id="46_k28o3"]
 [ext_resource type="Texture2D" uid="uid://iyu6m4xsl7wk" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner_Slots.png" id="47_j385u"]
 [ext_resource type="Texture2D" uid="uid://cw8k4ham2j7g6" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/Banner.png" id="48_1ppo1"]
@@ -1309,7 +1309,7 @@ offset_right = 676.0
 offset_bottom = 165.0
 theme_override_fonts/font = ExtResource("57_qfpd3")
 theme_override_font_sizes/font_size = 72
-text = "PLACEHOLDER"
+text = "Olympiknights"
 horizontal_alignment = 1
 vertical_alignment = 1
 

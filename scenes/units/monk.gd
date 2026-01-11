@@ -39,7 +39,6 @@ func _process(delta: float):
 # monk destroys everything in radius. Including allies
 func kaboom():
 	sprite.play("kaboom?")
-	await sprite.animation_finished
 	for unit in within_blast:
 		unit.take_dmg(20)
 	perish()
