@@ -53,7 +53,7 @@ func spawn_unit(type: Unit.Type, team: Unit.Team, lane: Lane):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass # $Server1Debug.text = str($P1Pose.camera_data[0]["server"].is_connection_available())
+	pass#$Server1Debug.text = "connection " + str($P1Pose.camera_data[0]["server"].is_connection_available() if "ok" else "lost")
 	#
 	#var pose1 : String = $P1Pose.cur_pose
 	#$Pose1Debug.text = "Player 1 did: " + pose1
@@ -68,8 +68,8 @@ func _process(_delta: float) -> void:
 	#elif Input.is_key_pressed(KEY_T):
 	
 	
-func _on_p_1_pose_pose_changed(camera_id: int, pose: String) -> void:
-	$Pose1Debug.text = "Player 1 did: " + pose
+#func _on_p_1_pose_pose_changed(camera_id: int, pose: String) -> void:
+	#$Pose1Debug.text = "Player 1 did: " + pose
 
 
 func _on_p_1_pose_mask_updated(camera_id: int, texture: ImageTexture) -> void:
