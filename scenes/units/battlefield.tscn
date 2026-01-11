@@ -1105,22 +1105,22 @@ text = "no pose"
 label_settings = SubResource("LabelSettings_ma1vy")
 
 [node name="LMid" type="Marker2D" parent="."]
-position = Vector2(191, 283)
+position = Vector2(208, 280)
 
 [node name="RMid" type="Marker2D" parent="."]
-position = Vector2(927, 283)
+position = Vector2(928, 280)
 
 [node name="LTop" type="Marker2D" parent="."]
-position = Vector2(303, 237)
+position = Vector2(208, 248)
 
 [node name="LBot" type="Marker2D" parent="."]
-position = Vector2(303, 318)
+position = Vector2(208, 320)
 
 [node name="RTop" type="Marker2D" parent="."]
-position = Vector2(835, 237)
+position = Vector2(928, 240)
 
 [node name="RBot" type="Marker2D" parent="."]
-position = Vector2(835, 318)
+position = Vector2(928, 320)
 
 [node name="UnitBucket" type="Node" parent="."]
 
