@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bf53kmqld5lqo"]
+
+[ext_resource type="Script" uid="uid://bil1nlfh78klj" path="res://scenes/units/arrow.gd" id="1_apace"]
+[ext_resource type="Texture2D" uid="uid://beiyjdtuyx7pq" path="res://assets/Tiny Swords (Free Pack)/Units/Black Units/Archer/Arrow.png" id="2_j4cp2"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5u3or"]
+radius = 6.0
+height = 46.0
+
+[node name="Arrow" type="Sprite2D"]
+texture = ExtResource("2_j4cp2")
+script = ExtResource("1_apace")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CapsuleShape2D_5u3or")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

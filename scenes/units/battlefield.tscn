@@ -1,7 +1,6 @@
-[gd_scene load_steps=95 format=3 uid="uid://b4sw2qtpxp4h0"]
+[gd_scene load_steps=102 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
-[ext_resource type="PackedScene" uid="uid://b345cshf836o5" path="res://scenes/units/warrior.tscn" id="2_nccru"]
 [ext_resource type="Texture2D" uid="uid://00hiefi5h6i8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Shadow.png" id="2_q8s32"]
 [ext_resource type="Texture2D" uid="uid://b0gqniv5chvsy" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color5.png" id="3_0pva5"]
 [ext_resource type="PackedScene" uid="uid://c48rrqnuxkjm4" path="res://scenes/units/tower.tscn" id="3_nccru"]
@@ -48,6 +47,12 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
+[ext_resource type="Script" uid="uid://ch55nbyp1am13" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
+[ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
+[ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
+[ext_resource type="Texture2D" uid="uid://do23o2gdoxaw6" path="res://assets/oaqarvlq.png" id="51_0pnp1"]
+[ext_resource type="Texture2D" uid="uid://djljgbhd4v37q" path="res://assets/yscgq80u.png" id="52_0pnp1"]
+[ext_resource type="Script" uid="uid://efqlp1ri71sy" path="res://scenes/units/particles.gd" id="53_s7b68"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1053,11 +1058,16 @@ sources/43 = SubResource("TileSetAtlasSource_xaikh")
 [sub_resource type="LabelSettings" id="LabelSettings_ma1vy"]
 font_size = 32
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q8s32"]
+shader = ExtResource("49_e8xa0")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_0pva5"]
+
 [node name="Battlefield" type="Node2D"]
 script = ExtResource("1_ma1vy")
 
 [node name="TileMap" type="TileMap" parent="."]
-position = Vector2(564, 358)
+position = Vector2(511, 250)
 tile_set = SubResource("TileSet_k4lsn")
 format = 2
 layer_0/name = "Background Water"
@@ -1071,17 +1081,14 @@ layer_3/tile_data = PackedInt32Array(-327676, 131098, 1, -262150, 65561, 0, -196
 layer_4/name = "Terrain Decoration"
 layer_4/tile_data = PackedInt32Array(65530, 15, 0, 5, 13, 0, 65531, 65568, 3, 1, 65566, 3, -262148, 393249, 1, -196612, 393249, 2, -131076, 65574, 0, -327683, 458785, 0, -262147, 458785, 1, -196611, 458785, 2, -131075, 458785, 3, -262146, 524321, 1, -196610, 524321, 2, -131074, 524321, 3, -262144, 1179683, 1, -196608, 1179683, 2, -327679, 1245219, 0, -262143, 1245219, 1, -196607, 1245219, 2, -262142, 1310755, 1, -4, 262160, 0, 65532, 262160, 1, -3, 327696, 0, 65533, 327696, 1, -196606, 262161, 0, -131070, 262161, 1, -196605, 327697, 0, -131069, 327697, 1, -65534, 262162, 0, 2, 262162, 1, -65533, 327698, 0, 3, 327698, 1, -131077, 38, 0, -65541, 38, 1, -65540, 65574, 1, -196604, 39, 0, -131068, 39, 1, -196603, 65575, 0, -131067, 65575, 1)
 
-[node name="Warrior" parent="." instance=ExtResource("2_nccru")]
-position = Vector2(569, 282)
-red_team = true
+[node name="RedTower" parent="." instance=ExtResource("3_nccru")]
+position = Vector2(118, 122)
 
-[node name="LTower" parent="." instance=ExtResource("3_nccru")]
-position = Vector2(171, 230)
+[node name="BlueTower" parent="." instance=ExtResource("3_nccru")]
+position = Vector2(908, 117)
+team = 1
 
-[node name="RTower" parent="." instance=ExtResource("3_nccru")]
-position = Vector2(961, 225)
-
-[node name="P1Pose" type="Node" parent="."]
+[node name="Poses" type="Node" parent="."]
 script = ExtResource("4_thxjy")
 
 [node name="Pose1Debug" type="Label" parent="."]
@@ -1098,21 +1105,124 @@ text = "no pose"
 label_settings = SubResource("LabelSettings_ma1vy")
 
 [node name="LMid" type="Marker2D" parent="."]
-position = Vector2(191, 283)
+position = Vector2(208, 280)
 
 [node name="RMid" type="Marker2D" parent="."]
-position = Vector2(927, 283)
+position = Vector2(928, 280)
 
 [node name="LTop" type="Marker2D" parent="."]
-position = Vector2(303, 237)
+position = Vector2(208, 248)
 
 [node name="LBot" type="Marker2D" parent="."]
-position = Vector2(303, 318)
+position = Vector2(208, 320)
 
 [node name="RTop" type="Marker2D" parent="."]
-position = Vector2(835, 237)
+position = Vector2(928, 240)
 
 [node name="RBot" type="Marker2D" parent="."]
-position = Vector2(835, 318)
+position = Vector2(928, 320)
 
-[connection signal="pose_changed" from="P1Pose" to="." method="_on_p_1_pose_pose_changed"]
+[node name="UnitBucket" type="Node" parent="."]
+
+[node name="CouchPotato" type="Node" parent="." node_paths=PackedStringArray("battlefield")]
+script = ExtResource("48_br54j")
+battlefield = NodePath("..")
+
+[node name="Mask1" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_q8s32")
+offset_top = 414.0
+offset_right = 200.0
+offset_bottom = 564.0
+texture = SubResource("PlaceholderTexture2D_0pva5")
+expand_mode = 1
+
+[node name="Mask2" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_q8s32")
+offset_left = 799.0
+offset_top = 414.0
+offset_right = 999.0
+offset_bottom = 564.0
+texture = SubResource("PlaceholderTexture2D_0pva5")
+expand_mode = 1
+
+[node name="P1Meter" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Squat" parent="P1Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 202.0
+offset_top = 476.0
+offset_right = 202.0
+offset_bottom = 476.0
+
+[node name="JJ" parent="P1Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 298.0
+offset_top = 475.0
+offset_right = 298.0
+offset_bottom = 475.0
+
+[node name="Progress" parent="P1Meter/JJ/Panel" index="0"]
+z_index = 1
+
+[node name="TextureRect" parent="P1Meter/JJ/Panel" index="1"]
+texture = ExtResource("51_0pnp1")
+
+[node name="PushUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 207.0
+offset_top = 381.0
+offset_right = 207.0
+offset_bottom = 381.0
+
+[node name="TextureRect" parent="P1Meter/PushUp/Panel" index="1"]
+texture = ExtResource("52_0pnp1")
+
+[node name="P2Meter" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 411.0
+offset_right = 451.0
+offset_bottom = 40.0
+
+[node name="Squat" parent="P2Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 202.0
+offset_top = 476.0
+offset_right = 202.0
+offset_bottom = 476.0
+
+[node name="JJ" parent="P2Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 298.0
+offset_top = 475.0
+offset_right = 298.0
+offset_bottom = 475.0
+
+[node name="TextureRect" parent="P2Meter/JJ/Panel" index="1"]
+texture = ExtResource("51_0pnp1")
+
+[node name="PushUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
+layout_mode = 1
+offset_left = 207.0
+offset_top = 381.0
+offset_right = 207.0
+offset_bottom = 381.0
+
+[node name="TextureRect" parent="P2Meter/PushUp/Panel" index="1"]
+texture = ExtResource("52_0pnp1")
+
+[node name="Particles" type="Node2D" parent="."]
+script = ExtResource("53_s7b68")
+particle_color = Color(1, 0.90588236, 0.2901961, 1)
+
+[connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
+[connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
+
+[editable path="P1Meter/JJ"]
+[editable path="P1Meter/PushUp"]
+[editable path="P2Meter/JJ"]
+[editable path="P2Meter/PushUp"]
