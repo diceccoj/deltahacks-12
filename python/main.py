@@ -76,6 +76,15 @@ def detect_pose(landmarks):
         else:
             l[name] = None
 
+    # Check for essential landmarks
+    if not l["left_hip"] or not l["right_hip"] or not l["left_shoulder"] or not l["right_shoulder"]:
+        return "none"
+
+    # Calculate torso height
+    hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
+    shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
+    torso_height = abs(shoulder_height - hip_height)
+
     # Squat
     if l["left_knee"] and l["left_hip"] and l["right_knee"] and l["right_hip"]:
         left_squat_diff = l["left_knee"].y - l["left_hip"].y
@@ -87,9 +96,6 @@ def detect_pose(landmarks):
     if l["left_wrist"] and l["right_wrist"] and l["left_ankle"] and l["right_ankle"] and \
        l["right_shoulder"] and l["left_shoulder"] and l["left_hip"] and l["right_hip"]:
 
-        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
-        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
-        torso_height = abs(shoulder_height - hip_height)
         elbow_distance = abs(l["left_elbow"].x - l["right_elbow"].x)
         wrist_distance = abs(l["left_wrist"].x - l["right_wrist"].x)
         ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
@@ -118,22 +124,19 @@ def detect_pose(landmarks):
     # Lunges
     if l["left_knee"] and l["left_hip"] and l["left_ankle"] and l["right_knee"] and l["right_hip"] and l["right_ankle"]:
 
-        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
-        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
-        torso_height = abs(shoulder_height - hip_height)
-
         ankle_to_knee_left = abs(l["left_ankle"].y - l["left_knee"].y)
         ankle_to_knee_right = abs(l["right_ankle"].y - l["right_knee"].y)
 
         ankle_to_ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
 
         # Right Lunge
-        if ankle_to_knee_right > torso_height * 0.5:
+        if ankle_to_knee_right > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
+
                 return "right lunge"
             
         # Left Lunge
-        if ankle_to_knee_left > torso_height * 0.5:
+        if ankle_to_knee_left > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
                 return "left lunge"
             
@@ -143,8 +146,6 @@ def detect_pose(landmarks):
        l["left_hip"] and l["right_hip"]:
         
         wrist_height = (l["left_wrist"].y + l["right_wrist"].y) / 2
-        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
-        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
 
         if wrist_height < shoulder_height + 0.1 and hip_height < shoulder_height + 0.2:
             return "push-up"
