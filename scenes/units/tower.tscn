@@ -23,16 +23,16 @@ shape = SubResource("CapsuleShape2D_d4mai")
 [node name="HealthBacking" type="TextureRect" parent="."]
 modulate = Color(0, 0, 0, 1)
 offset_left = -68.0
-offset_top = -160.0
+offset_top = 89.0
 offset_right = 68.0
-offset_bottom = -80.0
+offset_bottom = 169.0
 texture = ExtResource("3_2nwax")
 
 [node name="HealthBar" type="TextureRect" parent="."]
 offset_left = -64.0
-offset_top = -152.0
+offset_top = 97.0
 offset_right = 64.0
-offset_bottom = -88.0
+offset_bottom = 161.0
 texture = ExtResource("3_2nwax")
 expand_mode = 1
 

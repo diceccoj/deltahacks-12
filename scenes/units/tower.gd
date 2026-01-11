@@ -3,7 +3,14 @@ class_name Tower
 
 signal died
 
-var max_health := 50.0
+enum Team {
+	Red,
+	Blue
+}
+
+@export var team : Team
+
+var max_health := 100.0
 var health : float
 var bar_scale := 1.0
 
@@ -24,7 +31,7 @@ func take_damage(damage: float):
 
 
 func _on_body_entered(body: Node2D) -> void:
-	print("Tower touched by", body)
 	if body is Unit:
-		body.push_back()
-		take_damage(1)
+		if body.team != team:
+			body.push_back()
+			body.attack_tower(self)

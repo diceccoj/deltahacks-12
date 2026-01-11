@@ -222,6 +222,15 @@ def create_result_callback(camera_id):
             camera_states[camera_id]['latest_result'] = result
     return result_cb
 
+def encode_seg_mask(seg_masks):
+    if seg_masks == None:
+        black_mask = np.zeros((120, 160), dtype=np.uint8)
+        return cv2.imencode('.jpg', black_mask, [cv2.IMWRITE_JPEG_QUALITY, 75])
+    mask_array = seg_masks[0].numpy_view()
+    binary_mask = (mask_array > 0.5).astype(np.uint8) * 255
+    small_mask = cv2.resize(binary_mask, (160, 120))
+    return cv2.imencode('.jpg', small_mask, [cv2.IMWRITE_JPEG_QUALITY, 75])
+
 def process_camera(camera_id):
     """Process a single camera in a separate thread (NO cv2.imshow here)"""
     global running
@@ -250,7 +259,7 @@ def process_camera(camera_id):
                     print(f"Error: Camera {camera_id} failed to capture")
                     break
                 
-                frame = cv2.resize(frame, (1200, 900))
+                frame = cv2.resize(frame, (1200//2, 900//2))
                 frame = cv2.flip(frame, 1)
                 
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
@@ -275,7 +284,7 @@ def process_camera(camera_id):
 
                 # Add camera ID and pose to display - smaller, nicer font
                 cv2.putText(annotated_frame, f"Camera {camera_id}: {pose_str}",
-                           (5, 50), cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 100, 0), 3)
+                           (5, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 100, 0), 3)
                 cv2.putText(annotated_frame, "Press 'q' or ESC to exit",
                            (5, annotated_frame.shape[0] - 15),
                            cv2.FONT_HERSHEY_DUPLEX, 0.7, (100, 200, 255), 2)
@@ -286,15 +295,6 @@ def process_camera(camera_id):
                 with camera_states[camera_id]['lock']:
                     camera_states[camera_id]['latest_frame'] = cv2.resize(annotated_frame, (screen_width, screen_height))
                     camera_states[camera_id]['seg_mask'] = seg_masks
-
-                def encode_seg_mask(seg_masks):
-                    if seg_masks == None:
-                        black_mask = np.zeros((240, 320), dtype=np.uint8)
-                        return cv2.imencode('.png', black_mask)
-                    mask_array = seg_masks[0].numpy_view()
-                    binary_mask = (mask_array > 0.5).astype(np.uint8) * 255
-                    small_mask = cv2.resize(binary_mask, (320, 240))
-                    return cv2.imencode('.png', small_mask)
 
                 seg_success, seg_encoded = encode_seg_mask(seg_masks)
 
@@ -369,7 +369,7 @@ def main():
 
             # Display frames
             if frame0 is not None:
-                cv2.imshow(window0, frame0)
+                cv2.imshow(window0, frame0)#segmask0[0].numpy_view())
             if frame1 is not None:
                 cv2.imshow(window1, frame1)
             
