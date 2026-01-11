@@ -1,7 +1,6 @@
 [gd_scene load_steps=95 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
-[ext_resource type="PackedScene" uid="uid://b345cshf836o5" path="res://scenes/units/warrior.tscn" id="2_nccru"]
 [ext_resource type="Texture2D" uid="uid://00hiefi5h6i8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Shadow.png" id="2_q8s32"]
 [ext_resource type="Texture2D" uid="uid://b0gqniv5chvsy" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color5.png" id="3_0pva5"]
 [ext_resource type="PackedScene" uid="uid://c48rrqnuxkjm4" path="res://scenes/units/tower.tscn" id="3_nccru"]
@@ -48,6 +47,7 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
+[ext_resource type="Script" uid="uid://ch55nbyp1am13" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1071,14 +1071,11 @@ layer_3/tile_data = PackedInt32Array(-327676, 131098, 1, -262150, 65561, 0, -196
 layer_4/name = "Terrain Decoration"
 layer_4/tile_data = PackedInt32Array(65530, 15, 0, 5, 13, 0, 65531, 65568, 3, 1, 65566, 3, -262148, 393249, 1, -196612, 393249, 2, -131076, 65574, 0, -327683, 458785, 0, -262147, 458785, 1, -196611, 458785, 2, -131075, 458785, 3, -262146, 524321, 1, -196610, 524321, 2, -131074, 524321, 3, -262144, 1179683, 1, -196608, 1179683, 2, -327679, 1245219, 0, -262143, 1245219, 1, -196607, 1245219, 2, -262142, 1310755, 1, -4, 262160, 0, 65532, 262160, 1, -3, 327696, 0, 65533, 327696, 1, -196606, 262161, 0, -131070, 262161, 1, -196605, 327697, 0, -131069, 327697, 1, -65534, 262162, 0, 2, 262162, 1, -65533, 327698, 0, 3, 327698, 1, -131077, 38, 0, -65541, 38, 1, -65540, 65574, 1, -196604, 39, 0, -131068, 39, 1, -196603, 65575, 0, -131067, 65575, 1)
 
-[node name="Warrior" parent="." instance=ExtResource("2_nccru")]
-position = Vector2(569, 282)
-red_team = true
-
-[node name="LTower" parent="." instance=ExtResource("3_nccru")]
+[node name="RedTower" parent="." instance=ExtResource("3_nccru")]
 position = Vector2(171, 230)
+team = 1
 
-[node name="RTower" parent="." instance=ExtResource("3_nccru")]
+[node name="BlueTower" parent="." instance=ExtResource("3_nccru")]
 position = Vector2(961, 225)
 
 [node name="P1Pose" type="Node" parent="."]
@@ -1114,5 +1111,11 @@ position = Vector2(835, 237)
 
 [node name="RBot" type="Marker2D" parent="."]
 position = Vector2(835, 318)
+
+[node name="UnitBucket" type="Node" parent="."]
+
+[node name="CouchPotato" type="Node" parent="." node_paths=PackedStringArray("battlefield")]
+script = ExtResource("48_br54j")
+battlefield = NodePath("..")
 
 [connection signal="pose_changed" from="P1Pose" to="." method="_on_p_1_pose_pose_changed"]
