@@ -1,7 +1,11 @@
 extends Area2D
 class_name Tower
 
+@onready var explosion_effect: AnimatedSprite2D = $ExplosionEffect
+
+
 signal died
+var tower_fallen = false
 
 enum Team {
 	Red,
@@ -16,11 +20,12 @@ var bar_scale := 1.0
 
 func _ready():
 	health = max_health
+	explosion_effect.play("default")
 
 func take_damage(damage: float):
 	health -= damage
-	if health <= 0.0:
-		died.emit()
+	if health <= 0.0 and (not tower_fallen):
+		tower_fall()
 	health = max(0.0, health)
 	
 	var t := create_tween()
@@ -38,3 +43,10 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Monk:
 		if body.team != team:
 			body.kaboom()
+
+# queued when tower falls
+func tower_fall():
+	tower_fallen = true
+	explosion_effect.play("tower_kaboom")
+	await explosion_effect.animation_finished
+	died.emit()
