@@ -54,7 +54,7 @@
 [ext_resource type="Script" uid="uid://bnfr6kfvan3x6" path="res://scenes/startscreen.gd" id="51_ognnr"]
 [ext_resource type="Texture2D" uid="uid://dse2e5ff4ma68" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/ButtonSheetB.png" id="52_ognnr"]
 [ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="53_8ywix"]
-[ext_resource type="PackedScene" uid="uid://b7jjidi76htd1" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
+[ext_resource type="PackedScene" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
 [ext_resource type="Texture2D" uid="uid://bty40ykl6vj71" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/FancyHeader.png" id="56_pexdo"]
 [ext_resource type="FontFile" uid="uid://d07em73t338mh" path="res://assets/fonts/MedievalSharp-Regular.ttf" id="57_qfpd3"]
 

@@ -1,10 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://52ahhvcovnfr"]
+[gd_scene load_steps=7 format=3 uid="uid://52ahhvcovnfr"]
 
 [ext_resource type="Script" uid="uid://tylppt6wthih" path="res://scenes/exercise_meter.gd" id="1_3op5w"]
-[ext_resource type="Texture2D" uid="uid://chjaf5qxn6dsc" path="res://assets/5as2dwa6.png" id="1_wtumw"]
+[ext_resource type="Texture2D" uid="uid://by53av3bhytat" path="res://assets/Exersize Icons/Squat.png.png" id="2_3op5w"]
+[ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="3_pooof"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pooof"]
+bg_color = Color(0.6, 0.6, 0.6, 0.3529412)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3op5w"]
 bg_color = Color(0.77254903, 1, 0.34901962, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_h5vax"]
+font = ExtResource("3_pooof")
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
 
 [node name="ExerciseMeter" type="Control"]
 layout_mode = 3
@@ -22,15 +31,18 @@ color = Color(0.77250004, 1, 0.35000002, 1)
 layout_mode = 0
 offset_right = 71.0
 offset_bottom = 69.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pooof")
 
 [node name="Progress" type="Panel" parent="Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1, 0.05)
+scale = Vector2(0.96, 1e-05)
 pivot_offset = Vector2(34, 69)
 theme_override_styles/panel = SubResource("StyleBoxFlat_3op5w")
 
@@ -41,14 +53,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_wtumw")
+texture = ExtResource("2_3op5w")
 expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
 visible = false
 layout_mode = 0
-offset_top = -20.0
+offset_top = -15.0
 offset_right = 71.0
-offset_bottom = 3.0
+offset_bottom = 8.0
 text = "Ready!"
+label_settings = SubResource("LabelSettings_h5vax")
 horizontal_alignment = 1

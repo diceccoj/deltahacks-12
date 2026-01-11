@@ -27,11 +27,11 @@ enum Exercise {
 	Exercise.KNEE_UP: $"../P2Meter/KneeUp"
 }
 
-const MAX_SQUAT_TIME = 2
-const MAX_JJ_COUNT = 19
-const MAX_PU_COUNT = 3
-const MAX_LUNGE_TIME = 3
-const MAX_KU_COUNT = 14
+const MAX_SQUAT_TIME = 1.5
+const MAX_JJ_COUNT = 14
+const MAX_PU_COUNT = 2
+const MAX_LUNGE_TIME = 2
+const MAX_KU_COUNT = 9
 
 var state_template := {
 	"squat_ready": false,
