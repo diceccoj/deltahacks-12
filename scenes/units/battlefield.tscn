@@ -1,4 +1,4 @@
-[gd_scene load_steps=105 format=3 uid="uid://b4sw2qtpxp4h0"]
+[gd_scene load_steps=110 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
 [ext_resource type="Texture2D" uid="uid://00hiefi5h6i8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Shadow.png" id="2_q8s32"]
@@ -50,12 +50,17 @@
 [ext_resource type="PackedScene" uid="uid://vtieh1nclqb3" path="res://python/py_bridge.tscn" id="48_pt8d2"]
 [ext_resource type="Shader" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
 [ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="49_ix71i"]
-[ext_resource type="PackedScene" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
+[ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
 [ext_resource type="Texture2D" uid="uid://sn7lirp7u6ma" path="res://assets/Exersize Icons/JumpingJack.png" id="51_ix71i"]
 [ext_resource type="Texture2D" uid="uid://lfew5qym6t03" path="res://assets/Exersize Icons/Pushup.png" id="52_iiljl"]
 [ext_resource type="Texture2D" uid="uid://r0bex8un7670" path="res://assets/Exersize Icons/KneeUp.png" id="53_ix71i"]
 [ext_resource type="Script" path="res://scenes/units/particles.gd" id="53_s7b68"]
 [ext_resource type="Texture2D" uid="uid://df81bx3hb74tq" path="res://assets/Exersize Icons/Lunge.png.png" id="54_ix71i"]
+[ext_resource type="Script" uid="uid://dy2oinrb1vccp" path="res://scenes/endscreen.gd" id="57_o61p2"]
+[ext_resource type="FontFile" uid="uid://c6ggf0jh7hf7i" path="res://assets/fonts/antiquity-print.ttf" id="58_i0uyi"]
+[ext_resource type="Texture2D" uid="uid://iyu6m4xsl7wk" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner_Slots.png" id="59_kr6uy"]
+[ext_resource type="Texture2D" uid="uid://cw8k4ham2j7g6" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/Banner.png" id="60_h1p18"]
+[ext_resource type="Texture2D" uid="uid://bw03qbpo2vpbx" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BannerPressed.png" id="61_25djp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1275,9 +1280,86 @@ texture = ExtResource("54_ix71i")
 script = ExtResource("53_s7b68")
 particle_color = Color(0.77254903, 1, 0.34901962, 1)
 
+[node name="Endscreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 512.0
+offset_top = 312.0
+offset_right = 552.0
+offset_bottom = 352.0
+script = ExtResource("57_o61p2")
+
+[node name="Blackscreen" type="ColorRect" parent="Endscreen"]
+layout_mode = 0
+offset_left = -641.0
+offset_top = -381.0
+offset_right = 641.0
+offset_bottom = 324.0
+color = Color(0, 0, 0, 0.70980394)
+
+[node name="RedTeamWins" type="Label" parent="Endscreen"]
+z_index = 1
+layout_mode = 0
+offset_left = -318.0
+offset_top = -210.0
+offset_right = 309.0
+offset_bottom = -17.0
+theme_override_colors/font_color = Color(0.6059503, 0.20872903, 0.21541151, 1)
+theme_override_fonts/font = ExtResource("58_i0uyi")
+theme_override_font_sizes/font_size = 65
+text = "RED TEAM VICTORY"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BlueTeamWins" type="Label" parent="Endscreen"]
+z_index = 1
+layout_mode = 0
+offset_left = -318.0
+offset_top = -210.0
+offset_right = 309.0
+offset_bottom = -17.0
+theme_override_colors/font_color = Color(0.1999847, 0.37398055, 0.55804044, 1)
+theme_override_fonts/font = ExtResource("58_i0uyi")
+theme_override_font_sizes/font_size = 65
+text = "BLUE TEAM VICTORY"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Scroll" type="TextureRect" parent="Endscreen"]
+layout_mode = 0
+offset_left = -475.0
+offset_top = -294.0
+offset_right = 480.0
+offset_bottom = 213.0
+texture = ExtResource("59_kr6uy")
+
+[node name="PlayAgainButton" type="TextureButton" parent="Endscreen"]
+layout_mode = 0
+offset_left = -192.0
+offset_top = 47.0
+offset_right = 190.0
+offset_bottom = 150.0
+texture_normal = ExtResource("60_h1p18")
+texture_pressed = ExtResource("60_h1p18")
+texture_hover = ExtResource("61_25djp")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Replay" type="Label" parent="Endscreen/PlayAgainButton"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 37.0
+offset_right = 276.0
+offset_bottom = 75.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("58_i0uyi")
+theme_override_font_sizes/font_size = 26
+text = "REPLAY"
+
 [connection signal="completed_exercise" from="Poses" to="." method="_on_poses_completed_exercise"]
 [connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
 [connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
+[connection signal="pressed" from="Endscreen/PlayAgainButton" to="Endscreen" method="_on_play_again_pressed"]
 
 [editable path="P1Meter/JJ"]
 [editable path="P1Meter/PushUp"]

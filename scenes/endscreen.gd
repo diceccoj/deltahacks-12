@@ -1,4 +1,5 @@
 extends Control
+class_name Endscreen
 
 @onready var overlay := $Blackscreen
 @onready var red_wins := $RedTeamWins
@@ -16,8 +17,6 @@ func _ready() -> void:
 	overlay.visible = false
 	red_wins.visible = false
 	blue_wins.visible = false
-	scroll.visible = false
-	play_again.visible = false
 	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("debug_red_win"):
@@ -43,15 +42,11 @@ func show_end_screen(winning_team_red: bool) -> void:
 		blue_wins.visible = true
 
 
-# Replace with reset to start of game state
-func _on_play_again_pressed() -> void: 
-	button_type = "replay" 
-	$"../FadeAnimation".show()
-	$"../FadeAnimation/FadeTimer".start()
-	$"../FadeAnimation/AnimationPlayer".play("fadein") # Replace with function body.
 
 
-func _on_fade_timer_timeout() -> void:
+func _on_fade_timer_timeout() -> void: #Make this the start screen
+	# Same note, you'll have to link fade in and play it on the new scene
 	if button_type == "replay":
-		get_tree().change_scene_to_file("") #Make this the start screen
-		# Same note, you'll have to link fade in and play it on the new scene
+		get_tree().change_scene_to_file("res://scenes/units/battlefield.tscn") #Put the game start state here
+		$"../FadeAnimation/AnimationPlayer".play("fadeout")
+		# Note, you will have to include $"../FadeAnimation/AnimationPlayer".play("fadeout")  on _func ready for the scene in which you are going to

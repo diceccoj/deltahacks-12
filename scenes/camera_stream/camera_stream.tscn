@@ -46,14 +46,11 @@
 [ext_resource type="Texture2D" uid="uid://csx3y3x8kebi8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Resources/Tools/Tool_04.png" id="40_aopae"]
 [ext_resource type="Script" uid="uid://dy2oinrb1vccp" path="res://scenes/endscreen.gd" id="46_j385u"]
 [ext_resource type="FontFile" uid="uid://c6ggf0jh7hf7i" path="res://assets/fonts/antiquity-print.ttf" id="46_k28o3"]
-[ext_resource type="Texture2D" uid="uid://iyu6m4xsl7wk" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner_Slots.png" id="47_j385u"]
-[ext_resource type="Texture2D" uid="uid://cw8k4ham2j7g6" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/Banner.png" id="48_1ppo1"]
-[ext_resource type="Texture2D" uid="uid://bw03qbpo2vpbx" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BannerPressed.png" id="49_2teyd"]
 [ext_resource type="Texture2D" uid="uid://c77mcohbt0m4n" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable_Slots.png" id="51_8ywix"]
 [ext_resource type="Script" uid="uid://bnfr6kfvan3x6" path="res://scenes/startscreen.gd" id="51_ognnr"]
 [ext_resource type="Texture2D" uid="uid://dse2e5ff4ma68" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/ButtonSheetB.png" id="52_ognnr"]
 [ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="53_8ywix"]
-[ext_resource type="PackedScene" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
+[ext_resource type="PackedScene" uid="uid://b7jjidi76htd1" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
 [ext_resource type="Texture2D" uid="uid://bty40ykl6vj71" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/FancyHeader.png" id="56_pexdo"]
 [ext_resource type="FontFile" uid="uid://d07em73t338mh" path="res://assets/fonts/MedievalSharp-Regular.ttf" id="57_qfpd3"]
 
@@ -1206,37 +1203,6 @@ text = "BLUE TEAM VICTORY"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Scroll" type="TextureRect" parent="Endscreen"]
-layout_mode = 0
-offset_left = -475.0
-offset_top = -294.0
-offset_right = 480.0
-offset_bottom = 213.0
-texture = ExtResource("47_j385u")
-
-[node name="PlayAgainButton" type="TextureButton" parent="Endscreen"]
-layout_mode = 0
-offset_left = -192.0
-offset_top = 47.0
-offset_right = 190.0
-offset_bottom = 150.0
-texture_normal = ExtResource("48_1ppo1")
-texture_pressed = ExtResource("48_1ppo1")
-texture_hover = ExtResource("49_2teyd")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Replay" type="Label" parent="Endscreen/PlayAgainButton"]
-layout_mode = 0
-offset_left = 110.0
-offset_top = 37.0
-offset_right = 276.0
-offset_bottom = 75.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("46_k28o3")
-theme_override_font_sizes/font_size = 26
-text = "REPLAY"
-
 [node name="FadeAnimation" parent="." instance=ExtResource("55_yy8cn")]
 z_index = 5
 layout_mode = 0
@@ -1311,7 +1277,6 @@ text = "Olympiknights"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="Endscreen/PlayAgainButton" to="Endscreen" method="_on_play_again_pressed"]
 [connection signal="timeout" from="FadeAnimation/FadeTimer" to="Endscreen" method="_on_fade_timer_timeout"]
 [connection signal="timeout" from="FadeAnimation/FadeTimer" to="Startscreen" method="_on_fade_timer_timeout"]
 [connection signal="pressed" from="Startscreen/StartButton" to="Startscreen" method="_on_start_button_pressed"]

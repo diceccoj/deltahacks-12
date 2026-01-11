@@ -11,6 +11,7 @@ class_name Battlefield
 @onready var blue_start_pos: Marker2D = $RMid
 
 @onready var pose_server: PoseServer = $Poses
+@onready var endscreen: Endscreen = $Endscreen
 
 
 enum Lane {Left, Right}
@@ -42,6 +43,9 @@ func _ready() -> void:
 	}
 	
 	py_bridge.start_process()
+	
+	red_tower.died.connect(endscreen.show_end_screen.bind(false))
+	blue_tower.died.connect(endscreen.show_end_screen.bind(true))
 
 
 func spawn_unit(type: Unit.Type, team: Unit.Team, lane: Lane):
