@@ -1,6 +1,8 @@
 extends Control
 class_name ExerciseMeter
 
+@export var color : Color
+
 var readied := false
 var progress : float = 0.0
 

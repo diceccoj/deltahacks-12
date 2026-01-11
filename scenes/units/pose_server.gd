@@ -31,7 +31,7 @@ const MAX_SQUAT_TIME = 2
 const MAX_JJ_COUNT = 19
 const MAX_PU_COUNT = 3
 const MAX_LUNGE_TIME = 3
-const MAX_KU_COUNT = 19
+const MAX_KU_COUNT = 14
 
 var state_template := {
 	"squat_ready": false,
@@ -200,15 +200,16 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	elif Input.is_key_pressed(KEY_X):
 		pose = "left lunge"
 	
-	if Input.is_action_pressed(&"ui_left"):
+	var launch_particles = func(ex, amt):
 		var start_pos = mask_pos
-		var end_pos = gui[Exercise.SQUAT].global_position + gui[Exercise.SQUAT].size
-		print(gui[Exercise.SQUAT])
-		particles.launch(start_pos, end_pos, 1)
+		var end_pos = gui[ex].global_position + gui[ex].size
+		particles.launch(start_pos, end_pos, amt)
+
 	
 	if pose == "squat":
 		state["squat_time"] += delta
 		gui[Exercise.SQUAT].set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
+		launch_particles.call(Exercise.SQUAT, 1)
 		if state["squat_time"] > MAX_SQUAT_TIME:
 			state["squat_ready"] = true
 			gui[Exercise.SQUAT].set_readied(true)
@@ -220,7 +221,8 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	if pose == "right lunge" or pose == "left lunge":
 		state["lunge_time"] += delta
 		gui[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
-		if state["lunge_time"] > MAX_SQUAT_TIME:
+		launch_particles.call(Exercise.LUNGE, 1)
+		if state["lunge_time"] > MAX_LUNGE_TIME:
 			state["lunge_ready"] = true
 			gui[Exercise.LUNGE].set_readied(true)
 	else:
@@ -234,6 +236,7 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		state["jj_did_one"] = !state["jj_did_one"]
 		state["jj_count"] += 1
 		print("DID JJ ", pose, " ", state["jj_count"])
+		launch_particles.call(Exercise.JJ, 5)
 		gui[Exercise.JJ].set_progress(clamp(float(state["jj_count"]) / MAX_JJ_COUNT, 0, 1))
 		if state["jj_count"] > MAX_JJ_COUNT:
 			state["jj_ready"] = true
@@ -243,6 +246,7 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		state["pu_did_one"] = !state["pu_did_one"]
 		state["pu_count"] += 1
 		print("DID PU ", pose, " ", state["pu_count"], " ", state["pu_did_one"])
+		launch_particles.call(Exercise.PUSH_UP, 15)
 		gui[Exercise.PUSH_UP].set_progress(clamp(float(state["pu_count"]) / MAX_PU_COUNT, 0, 1))
 		if state["pu_count"] >= MAX_PU_COUNT:
 			state["pu_ready"] = true
@@ -251,6 +255,7 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	if (pose == "knee_up_l" and !state["ku_did_one"]) or (pose == "knee_up_r" and state["ku_did_one"]):
 		state["ku_did_one"] = !state["ku_did_one"]
 		state["ku_count"] += 1
+		launch_particles.call(Exercise.KNEE_UP, 5)
 		gui[Exercise.KNEE_UP].set_progress(clamp(float(state["ku_count"]) / MAX_KU_COUNT, 0, 1))
 		if state["ku_count"] >= MAX_KU_COUNT:
 			state["ku_ready"] = true
