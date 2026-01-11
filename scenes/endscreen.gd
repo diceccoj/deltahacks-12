@@ -4,7 +4,7 @@ extends Control
 @onready var red_wins := $RedTeamWins
 @onready var blue_wins := $BlueTeamWins
 @onready var scroll := $Scroll
-@onready var play_again := $PlayAgain
+@onready var play_again := $PlayAgainButton
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
