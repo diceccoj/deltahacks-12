@@ -40,7 +40,7 @@ var state_template := {
 
 var player_state = [state_template.duplicate_deep(), state_template.duplicate_deep()]
 
-signal completed_exercise(player: int, exercise: Exercise)
+signal completed_exercise(player: int, exercise: Exercise, left_lane: bool)
 
 const array_size = 5
 
@@ -225,7 +225,7 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 			var s : String = p[0]
 			var ex : Exercise = p[1]
 			if state[s]: # ready
-				completed_exercise.emit(p[1])
+				completed_exercise.emit(camera_id, ex, pose == "place_left")
 				state[s] = false
 				gui[ex].set_progress(0)
 				gui[ex].set_readied(false)

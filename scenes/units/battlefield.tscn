@@ -47,7 +47,7 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
-[ext_resource type="Script" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
+[ext_resource type="Script" uid="uid://ch55nbyp1am13" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
 [ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
 [ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
 [ext_resource type="Texture2D" uid="uid://do23o2gdoxaw6" path="res://assets/oaqarvlq.png" id="51_0pnp1"]
