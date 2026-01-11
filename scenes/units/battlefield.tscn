@@ -47,15 +47,15 @@
 [ext_resource type="Texture2D" uid="uid://deo3ee3j0ia0k" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color4.png" id="43_qt3k1"]
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
-[ext_resource type="Script" uid="uid://ch55nbyp1am13" path="res://scenes/units/couch_potato.gd" id="48_br54j"]
-[ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
-[ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
-[ext_resource type="Texture2D" uid="uid://do23o2gdoxaw6" path="res://assets/oaqarvlq.png" id="51_0pnp1"]
-[ext_resource type="Texture2D" uid="uid://djljgbhd4v37q" path="res://assets/yscgq80u.png" id="52_0pnp1"]
-[ext_resource type="Texture2D" uid="uid://dk4rwudrdy6c2" path="res://xl9bh8w3.png" id="53_pt8d2"]
-[ext_resource type="Script" uid="uid://efqlp1ri71sy" path="res://scenes/units/particles.gd" id="53_s7b68"]
-[ext_resource type="Texture2D" uid="uid://d0tnfq5kqnfu4" path="res://assets/46v3pwvt.png" id="54_ix71i"]
-[ext_resource type="Script" uid="uid://d2u2tp5aimfpy" path="res://python/py_bridge.gd" id="55_n4nv1"]
+[ext_resource type="PackedScene" uid="uid://vtieh1nclqb3" path="res://python/py_bridge.tscn" id="48_pt8d2"]
+[ext_resource type="Shader" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
+[ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="49_ix71i"]
+[ext_resource type="PackedScene" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
+[ext_resource type="Texture2D" uid="uid://sn7lirp7u6ma" path="res://assets/Exersize Icons/JumpingJack.png" id="51_ix71i"]
+[ext_resource type="Texture2D" uid="uid://lfew5qym6t03" path="res://assets/Exersize Icons/Pushup.png" id="52_iiljl"]
+[ext_resource type="Texture2D" uid="uid://r0bex8un7670" path="res://assets/Exersize Icons/KneeUp.png" id="53_ix71i"]
+[ext_resource type="Script" path="res://scenes/units/particles.gd" id="53_s7b68"]
+[ext_resource type="Texture2D" uid="uid://df81bx3hb74tq" path="res://assets/Exersize Icons/Lunge.png.png" id="54_ix71i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_evjjc"]
 texture = ExtResource("2_q8s32")
@@ -1059,7 +1059,9 @@ sources/42 = SubResource("TileSetAtlasSource_kb2oj")
 sources/43 = SubResource("TileSetAtlasSource_xaikh")
 
 [sub_resource type="LabelSettings" id="LabelSettings_ma1vy"]
-font_size = 32
+font = ExtResource("49_ix71i")
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q8s32"]
 shader = ExtResource("49_e8xa0")
@@ -1091,45 +1093,39 @@ position = Vector2(118, 122)
 position = Vector2(908, 117)
 team = 1
 
+[node name="PyBridge" parent="." instance=ExtResource("48_pt8d2")]
+
 [node name="Poses" type="Node" parent="."]
 script = ExtResource("4_thxjy")
 
-[node name="Pose1Debug" type="Label" parent="."]
-offset_top = 45.0
-offset_right = 172.0
-offset_bottom = 90.0
-text = "connection"
-label_settings = SubResource("LabelSettings_ma1vy")
-
 [node name="Server1Debug" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "no pose"
+visible = false
+offset_left = 3.0
+offset_top = 1.0
+offset_right = 175.0
+offset_bottom = 46.0
+text = "connection ok"
 label_settings = SubResource("LabelSettings_ma1vy")
 
 [node name="LMid" type="Marker2D" parent="."]
-position = Vector2(208, 280)
+position = Vector2(151, 175)
 
 [node name="RMid" type="Marker2D" parent="."]
-position = Vector2(928, 280)
+position = Vector2(871, 175)
 
 [node name="LTop" type="Marker2D" parent="."]
-position = Vector2(208, 248)
+position = Vector2(151, 143)
 
 [node name="LBot" type="Marker2D" parent="."]
-position = Vector2(208, 320)
+position = Vector2(151, 215)
 
 [node name="RTop" type="Marker2D" parent="."]
-position = Vector2(928, 240)
+position = Vector2(871, 135)
 
 [node name="RBot" type="Marker2D" parent="."]
-position = Vector2(928, 320)
+position = Vector2(871, 215)
 
 [node name="UnitBucket" type="Node" parent="."]
-
-[node name="CouchPotato" type="Node" parent="." node_paths=PackedStringArray("battlefield")]
-script = ExtResource("48_br54j")
-battlefield = NodePath("..")
 
 [node name="Mask1" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_q8s32")
@@ -1156,56 +1152,57 @@ offset_bottom = 40.0
 
 [node name="Squat" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 202.0
-offset_top = 476.0
-offset_right = 202.0
-offset_bottom = 476.0
+offset_left = 211.0
+offset_top = 471.0
+offset_right = 211.0
+offset_bottom = 471.0
+scale = Vector2(1.1274623, 1.1274623)
+metadata/_edit_group_ = true
 
 [node name="JJ" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 298.0
-offset_top = 475.0
-offset_right = 298.0
-offset_bottom = 475.0
-
-[node name="Progress" parent="P1Meter/JJ/Panel" index="0"]
-z_index = 1
+offset_left = 300.0
+offset_top = 470.0
+offset_right = 300.0
+offset_bottom = 470.0
+scale = Vector2(1.1274623, 1.1274623)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/JJ/Panel" index="1"]
-texture = ExtResource("51_0pnp1")
+texture = ExtResource("51_ix71i")
 
 [node name="PushUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 207.0
-offset_top = 381.0
-offset_right = 207.0
-offset_bottom = 381.0
+offset_left = 211.0
+offset_top = 364.0
+offset_right = 211.0
+offset_bottom = 364.0
+scale = Vector2(1.1274623, 1.1274623)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/PushUp/Panel" index="1"]
-texture = ExtResource("52_0pnp1")
+texture = ExtResource("52_iiljl")
 
 [node name="KneeUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 300.0
-offset_top = 386.0
+offset_top = 365.0
 offset_right = 300.0
-offset_bottom = 386.0
-
-[node name="Progress" parent="P1Meter/KneeUp/Panel" index="0"]
-z_index = 1
+offset_bottom = 365.0
+scale = Vector2(1.1274623, 1.1274623)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/KneeUp/Panel" index="1"]
-texture = ExtResource("53_pt8d2")
+texture = ExtResource("53_ix71i")
 
 [node name="Lunge" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 385.0
-offset_top = 434.0
-offset_right = 385.0
-offset_bottom = 434.0
-
-[node name="Progress" parent="P1Meter/Lunge/Panel" index="0"]
-z_index = 1
+offset_left = 384.0
+offset_top = 432.0
+offset_right = 384.0
+offset_bottom = 432.0
+scale = Vector2(1.1274623, 1.1274623)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/Lunge/Panel" index="1"]
 texture = ExtResource("54_ix71i")
@@ -1219,43 +1216,48 @@ offset_bottom = 40.0
 
 [node name="Squat" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 202.0
-offset_top = 476.0
-offset_right = 202.0
-offset_bottom = 476.0
+offset_left = 211.0
+offset_top = 471.0
+offset_right = 211.0
+offset_bottom = 471.0
+scale = Vector2(1.1385984, 1.1385984)
+metadata/_edit_group_ = true
 
 [node name="JJ" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 298.0
-offset_top = 475.0
-offset_right = 298.0
-offset_bottom = 475.0
+offset_left = 300.0
+offset_top = 470.0
+offset_right = 300.0
+offset_bottom = 470.0
+scale = Vector2(1.1385984, 1.1385984)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/JJ/Panel" index="1"]
-texture = ExtResource("51_0pnp1")
+texture = ExtResource("51_ix71i")
 
 [node name="PushUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
-offset_left = 207.0
-offset_top = 381.0
-offset_right = 207.0
-offset_bottom = 381.0
+offset_left = 211.0
+offset_top = 364.0
+offset_right = 211.0
+offset_bottom = 364.0
+scale = Vector2(1.1385984, 1.1385984)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/PushUp/Panel" index="1"]
-texture = ExtResource("52_0pnp1")
+texture = ExtResource("52_iiljl")
 
 [node name="KneeUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 300.0
-offset_top = 386.0
+offset_top = 365.0
 offset_right = 300.0
-offset_bottom = 386.0
-
-[node name="Progress" parent="P2Meter/KneeUp/Panel" index="0"]
-z_index = 1
+offset_bottom = 365.0
+scale = Vector2(1.1385984, 1.1385984)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/KneeUp/Panel" index="1"]
-texture = ExtResource("53_pt8d2")
+texture = ExtResource("53_ix71i")
 
 [node name="Lunge" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
@@ -1263,21 +1265,17 @@ offset_left = 116.0
 offset_top = 432.0
 offset_right = 116.0
 offset_bottom = 432.0
-
-[node name="Progress" parent="P2Meter/Lunge/Panel" index="0"]
-z_index = 1
+scale = Vector2(1.1385984, 1.1385984)
+metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/Lunge/Panel" index="1"]
 texture = ExtResource("54_ix71i")
 
 [node name="Particles" type="Node2D" parent="."]
 script = ExtResource("53_s7b68")
-particle_color = Color(1, 0.90588236, 0.2901961, 1)
+particle_color = Color(0.77254903, 1, 0.34901962, 1)
 
-[node name="PyBridge" type="Node" parent="."]
-script = ExtResource("55_n4nv1")
-metadata/_custom_type_script = "uid://d2u2tp5aimfpy"
-
+[connection signal="completed_exercise" from="Poses" to="." method="_on_poses_completed_exercise"]
 [connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
 [connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
 

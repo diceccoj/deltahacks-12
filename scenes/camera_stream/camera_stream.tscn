@@ -1,6 +1,5 @@
-[gd_scene load_steps=110 format=3 uid="uid://dkjodo2hi5yqp"]
+[gd_scene load_steps=109 format=3 uid="uid://dkjodo2hi5yqp"]
 
-[ext_resource type="Script" uid="uid://tti6b7mc8te4" path="res://scenes/camera_stream/camera_stream.gd" id="1_j600m"]
 [ext_resource type="Texture2D" uid="uid://bnijma11d2m6w" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Swords/Swords.png" id="2_2teyd"]
 [ext_resource type="Texture2D" uid="uid://b0gqniv5chvsy" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color5.png" id="3_mfwet"]
 [ext_resource type="Texture2D" uid="uid://3vuokwiauvqu" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Water Background color.png" id="4_8c88m"]
@@ -54,7 +53,7 @@
 [ext_resource type="Script" uid="uid://bnfr6kfvan3x6" path="res://scenes/startscreen.gd" id="51_ognnr"]
 [ext_resource type="Texture2D" uid="uid://dse2e5ff4ma68" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/ButtonSheetB.png" id="52_ognnr"]
 [ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="53_8ywix"]
-[ext_resource type="PackedScene" uid="uid://b7jjidi76htd1" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
+[ext_resource type="PackedScene" path="res://scenes/fade_animation.tscn" id="55_yy8cn"]
 [ext_resource type="Texture2D" uid="uid://bty40ykl6vj71" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/FancyHeader.png" id="56_pexdo"]
 [ext_resource type="FontFile" uid="uid://d07em73t338mh" path="res://assets/fonts/MedievalSharp-Regular.ttf" id="57_qfpd3"]
 
@@ -1144,7 +1143,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
-script = ExtResource("1_j600m")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -5)
@@ -1309,7 +1307,7 @@ offset_right = 676.0
 offset_bottom = 165.0
 theme_override_fonts/font = ExtResource("57_qfpd3")
 theme_override_font_sizes/font_size = 72
-text = "PLACEHOLDER"
+text = "Olympiknights"
 horizontal_alignment = 1
 vertical_alignment = 1
 

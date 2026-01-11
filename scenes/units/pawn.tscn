@@ -328,8 +328,8 @@ height = 68.0
 [node name="Pawn" type="CharacterBody2D"]
 script = ExtResource("1_3gqno")
 type = 5
-move_speed = 120.0
-attack = 7.0
+move_speed = 90.0
+attack = 3.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

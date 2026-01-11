@@ -20,5 +20,6 @@ func _on_start_button_pressed() -> void:
 
 func _on_fade_timer_timeout() -> void:
 	if button_type == "start":
-		get_tree().change_scene_to_file("") #Put the game start state here
+		get_tree().change_scene_to_file("res://scenes/units/battlefield.tscn") #Put the game start state here
+		$"../FadeAnimation/AnimationPlayer".play("fadeout")
 		# Note, you will have to include $"../FadeAnimation/AnimationPlayer".play("fadeout")  on _func ready for the scene in which you are going to
