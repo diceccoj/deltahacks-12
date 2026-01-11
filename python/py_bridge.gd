@@ -3,6 +3,8 @@ class_name PyBridge
 
 @export var python_file =  "res://python/main.py"
 
+@onready var pose_server: Node = $PoseServer
+
 var user_terminal = ""
 var python_cmnd_string : String
 var process_id : int = -1
