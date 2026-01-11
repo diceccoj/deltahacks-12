@@ -3,11 +3,15 @@ import threading
 import cv2
 import numpy as np
 import mediapipe as mp
+import math
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 latest_result = None
 result_lock = threading.Lock()
+
+screen_width = 1920
+screen_height = 1080
 
 SERVER_IP = "127.0.0.1"
 SERVER_PORT = 4242
@@ -82,15 +86,35 @@ def detect_pose(landmarks):
 
     # Calculate torso height
     hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
+    hip_x = (l["left_hip"].x + l["right_hip"].x) / 2
+
     shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
-    torso_height = abs(shoulder_height - hip_height)
+    shoulder_x = (l["left_shoulder"].x + l["right_shoulder"].x) / 2
+
+    torso_height = math.sqrt((shoulder_height - hip_height) ** 2 + (shoulder_x - hip_x) ** 2)
+
+    # Place Left / Right
+    if l["left_wrist"] and l["left_shoulder"] and l["right_wrist"] and l["right_shoulder"]:
+
+        torso_width = abs(l["left_shoulder"].x - l["right_shoulder"].x)
+
+        if torso_width > torso_height * 0.3:
+            # Place Left
+            if l["left_wrist"].x < l["left_shoulder"].x and l["right_wrist"].x < l["right_shoulder"].x - torso_height * 0.4:
+                return "place_left"
+            # Place Right
+            if l["left_wrist"].x > l["left_shoulder"].x + torso_height * 0.4 and l["right_wrist"].x > l["right_shoulder"].x:
+                return "place_right"
 
     # Squat
     if l["left_knee"] and l["left_hip"] and l["right_knee"] and l["right_hip"]:
         left_squat_diff = l["left_knee"].y - l["left_hip"].y
         right_squat_diff = l["right_knee"].y - l["right_hip"].y
-        if left_squat_diff < 0.1 and right_squat_diff < 0.1:
-            return "squat"
+
+        # Checks if chest is upright
+        if abs(shoulder_height - hip_height) > torso_height * 0.75:
+            if left_squat_diff < 0.1 and right_squat_diff < 0.1:
+                return "squat"
 
     # Jumping Jacks
     if l["left_wrist"] and l["right_wrist"] and l["left_ankle"] and l["right_ankle"] and \
@@ -129,30 +153,74 @@ def detect_pose(landmarks):
 
         ankle_to_ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
 
+        torso_width = abs(l["left_shoulder"].x - l["right_shoulder"].x) + abs(l["left_hip"].x - l["right_hip"].x) / 2
+
         # Right Lunge
         if ankle_to_knee_right > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
-
-                return "right lunge"
+                if torso_width < torso_height * 0.3:
+                    return "right lunge"
             
         # Left Lunge
         if ankle_to_knee_left > torso_height * 0.1:
             if ankle_to_ankle_distance > torso_height:
-                return "left lunge"
+                if torso_width < torso_height * 0.3:
+                    return "left lunge"
             
         
     # Push-up
     if l["left_wrist"] and l["right_wrist"] and l["left_shoulder"] and l["right_shoulder"] and \
-       l["left_hip"] and l["right_hip"]:
+       l["left_hip"] and l["right_hip"] and l["left_hip"] and l["right_hip"]:
         
+        ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
+        shoulder_height = (l["left_shoulder"].y + l["right_shoulder"].y) / 2
+        hip_height = (l["left_hip"].y + l["right_hip"].y) / 2
         wrist_height = (l["left_wrist"].y + l["right_wrist"].y) / 2
 
-        if wrist_height < shoulder_height + 0.1 and hip_height < shoulder_height + 0.2:
-            return "push-up"
+
+        #  Check if body is horizontal
+        if abs(shoulder_height - hip_height) < 0.1 and abs(hip_height - ankle_height) < 0.1:
+            # Check if wrists are close to shoulders height
+            if abs(wrist_height - shoulder_height) < 0.2:
+                return "push_up_down"
+
+        # Check if body is on a slight slant
+        if shoulder_height < hip_height and abs(shoulder_height - hip_height) < 0.2 and abs(hip_height - ankle_height) < 0.2:
+            # Check if wrists are below shoulders height
+            if wrist_height - shoulder_height > 0.1:
+                return "push_up"
+            
+    # Standing
+    if l["left_ankle"] and l["right_ankle"]:
+
+        ankle_distance = abs(l["left_ankle"].x - l["right_ankle"].x)
+        ankle_height = (l["left_ankle"].y + l["right_ankle"].y) / 2
+            
+        # checks if wrists and ankles are close together
+        if ankle_distance < torso_height * 0.5:
+            if abs(hip_height - ankle_height) > torso_height * 1.1:
+                return "standing"
 
 
     # No recognized pose
     return "none"
+
+def get_slope(x1, y1, x2, y2):
+    """
+    Return slope (dy/dx) between points (x1, y1) and (x2, y2).
+    Returns math.inf for a vertical line.
+    """
+    if x2 == x1:
+        return math.inf
+    return (y2 - y1) / (x2 - x1)
+
+def get_midpoint(x1, y1, x2, y2):
+    """
+    Return midpoint between points (x1, y1) and (x2, y2).
+    """
+    mx = (x1 + x2) / 2
+    my = (y1 + y2) / 2
+    return mx, my
 
 def draw_landmarks(rgb_image, detection_result):
 
@@ -242,9 +310,9 @@ with PoseLandmarker.create_from_options(options) as landmarker:
             10,
         )
 
-        image = cv2.resize(annotated_frame, (800, 600))
+        image = cv2.resize(annotated_frame, (screen_width, screen_height))
 
-        _, encoded_image = cv2.imencode(".jpg", cv2.resize(annotated_frame, (400, 300)))
+        _, encoded_image = cv2.imencode(".jpg", cv2.resize(annotated_frame, (screen_width, screen_height)))
 
 
 
