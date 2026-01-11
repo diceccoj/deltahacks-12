@@ -3,7 +3,6 @@ class_name PyBridge
 
 @export var python_file =  "res://python/main.py"
 
-@onready var pose_server: PoseServer = $PoseServer
 
 var user_terminal = ""
 var python_cmnd_string : String

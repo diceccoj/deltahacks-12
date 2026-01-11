@@ -372,7 +372,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_of0sy")
 }],
-"loop": true,
+"loop": false,
 "name": &"kaboom?",
 "speed": 10.0
 }, {
@@ -416,22 +416,25 @@ radius = 19.0
 height = 68.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lbf7i"]
-radius = 91.44397
+radius = 121.037186
 
 [node name="Monk" type="CharacterBody2D"]
 script = ExtResource("1_lbf7i")
+move_speed = 200.0
+attack = 4.0
+total_hp = 40.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_yam55")
 animation = &"kaboom?"
 autoplay = "idle_red"
-frame_progress = 0.455203
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_l1whp")
 
 [node name="BlastRadius" type="Area2D" parent="."]
+collision_mask = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BlastRadius"]
 shape = SubResource("CircleShape2D_lbf7i")

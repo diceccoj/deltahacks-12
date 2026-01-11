@@ -26,9 +26,20 @@ func _process(delta: float):
 	
 	
 	move_and_slide()
+	for index in get_slide_collision_count():
+		var clsn = get_slide_collision(index)
+		var collided_obj := clsn.get_collider()
+		#print("Collided with: ", body.name)
+		if (collided_obj is Unit):
+			if (collided_obj.team != team): kaboom()
+
 	if (current_hp <= 0):
 		perish()
 
 # monk destroys everything in radius. Including allies
 func kaboom():
-	pass
+	sprite.play("kaboom?")
+	await sprite.animation_finished
+	for unit in within_blast:
+		unit.take_dmg(20)
+	perish()

@@ -53,6 +53,7 @@ var state_template := {
 var player_state = [state_template.duplicate_deep(), state_template.duplicate_deep()]
 
 signal completed_exercise(player: int, exercise: Exercise, left_lane: bool)
+	
 
 const array_size = 5
 
@@ -82,6 +83,7 @@ signal exercise_detected(camera_id: int, exercise: String)
 signal mask_updated(camera_id: int, texture: ImageTexture)
 
 func _ready() -> void:
+	
 	# Create server for camera 0 (port 4242)
 	camera_data[0]["server"] = UDPServer.new()
 	camera_data[0]["server"].listen(4242)

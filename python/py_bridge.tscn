@@ -1,10 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://vtieh1nclqb3"]
+[gd_scene load_steps=2 format=3 uid="uid://vtieh1nclqb3"]
 
 [ext_resource type="Script" uid="uid://d2u2tp5aimfpy" path="res://python/py_bridge.gd" id="1_h6o5d"]
-[ext_resource type="Script" uid="uid://bgxvgbfk63qgn" path="res://scenes/units/pose_server.gd" id="2_wwggp"]
 
 [node name="PyBridge" type="Node"]
 script = ExtResource("1_h6o5d")
-
-[node name="PoseServer" type="Node" parent="."]
-script = ExtResource("2_wwggp")
