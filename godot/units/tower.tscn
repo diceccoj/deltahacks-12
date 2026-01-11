@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://c48rrqnuxkjm4"]
+
+[ext_resource type="Texture2D" uid="uid://vlpvdgwhe256" path="res://assets/Tiny Swords (Free Pack)/Buildings/Red Buildings/Tower.png" id="1_d4mai"]
+[ext_resource type="Script" uid="uid://ch6eqv8ql25dj" path="res://units/tower.gd" id="1_d8jq7"]
+[ext_resource type="Texture2D" uid="uid://bupij1ovmj8gf" path="res://units/BigBar_Fill.png" id="3_2nwax"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_d4mai"]
+radius = 45.0
+height = 102.0
+
+[node name="Tower" type="Area2D"]
+script = ExtResource("1_d8jq7")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_d4mai")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 49)
+shape = SubResource("CapsuleShape2D_d4mai")
+
+[node name="HealthBacking" type="TextureRect" parent="."]
+modulate = Color(0, 0, 0, 1)
+offset_left = -68.0
+offset_top = -160.0
+offset_right = 68.0
+offset_bottom = -80.0
+texture = ExtResource("3_2nwax")
+
+[node name="HealthBar" type="TextureRect" parent="."]
+offset_left = -64.0
+offset_top = -152.0
+offset_right = 64.0
+offset_bottom = -88.0
+texture = ExtResource("3_2nwax")
+expand_mode = 1
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

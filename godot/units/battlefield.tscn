@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://b4sw2qtpxp4h0"]
+
+[ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://units/battlefield.gd" id="1_ma1vy"]
+[ext_resource type="PackedScene" uid="uid://bknltwirfyy0p" path="res://units/archer.tscn" id="1_pw1f4"]
+[ext_resource type="PackedScene" uid="uid://b345cshf836o5" path="res://units/warrior.tscn" id="2_nccru"]
+[ext_resource type="PackedScene" uid="uid://c48rrqnuxkjm4" path="res://units/tower.tscn" id="3_nccru"]
+[ext_resource type="Script" uid="uid://bgxvgbfk63qgn" path="res://units/pose_server.gd" id="4_thxjy"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ma1vy"]
+font_size = 32
+
+[node name="Battlefield" type="Node2D"]
+script = ExtResource("1_ma1vy")
+
+[node name="Archer" parent="." instance=ExtResource("1_pw1f4")]
+position = Vector2(261, 362)
+
+[node name="Warrior" parent="." instance=ExtResource("2_nccru")]
+position = Vector2(424, 364)
+
+[node name="Warrior2" parent="." instance=ExtResource("2_nccru")]
+position = Vector2(614, 364)
+
+[node name="LTower" parent="." instance=ExtResource("3_nccru")]
+position = Vector2(83, 286)
+
+[node name="RTower" parent="." instance=ExtResource("3_nccru")]
+position = Vector2(1036, 298)
+
+[node name="P1Pose" type="Node" parent="."]
+script = ExtResource("4_thxjy")
+
+[node name="Pose1Debug" type="Label" parent="."]
+offset_top = 45.0
+offset_right = 172.0
+offset_bottom = 90.0
+text = "connection"
+label_settings = SubResource("LabelSettings_ma1vy")
+
+[node name="Server1Debug" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "no pose"
+label_settings = SubResource("LabelSettings_ma1vy")
+
+[connection signal="pose_changed" from="P1Pose" to="." method="_on_p_1_pose_pose_changed"]

@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3 uid="uid://b345cshf836o5"]
+
+[ext_resource type="Script" uid="uid://cbnu86rq428fi" path="res://units/unit.gd" id="1_e1lyv"]
+[ext_resource type="Texture2D" uid="uid://cygsdxbfscodq" path="res://assets/Tiny Swords (Free Pack)/Units/Red Units/Warrior/Warrior_Run.png" id="1_l1whp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1lyv"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4mdx"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_blfln"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pc3iv"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bopkj"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_djbit"]
+atlas = ExtResource("1_l1whp")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yam55"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e1lyv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n4mdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_blfln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pc3iv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bopkj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_djbit")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l1whp"]
+radius = 19.0
+height = 68.0
+
+[node name="Warrior" type="CharacterBody2D"]
+script = ExtResource("1_e1lyv")
+type = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_yam55")
+animation = &"run"
+autoplay = "run"
+frame_progress = 0.36992034
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_l1whp")

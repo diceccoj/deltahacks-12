@@ -195,7 +195,7 @@ def result_cb(result, output_image: mp.Image, timestamp_ms: int):
         latest_result = result
 
 options = PoseLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path="./pose_landmarker_heavy.task"),
+    base_options=BaseOptions(model_asset_path="pose_landmarker_lite.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=result_cb)
 
@@ -262,10 +262,10 @@ with PoseLandmarker.create_from_options(options) as landmarker:
 
 
 
-        # if len(encoded_image) <= 65507:
-        #     client_socket.sendto(encoded_image, (SERVER_IP, SERVER_PORT))
-        # else:
-        #     print("Frame too large, skipping")
+        if len(pose_str) <= 65507:
+            client_socket.sendto(pose_str.encode('utf-8'), (SERVER_IP, SERVER_PORT))
+        else:
+            print("Frame too large, skipping")
 
         cv2.imshow("Image", image)
 
