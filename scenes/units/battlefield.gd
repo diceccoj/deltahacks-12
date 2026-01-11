@@ -25,6 +25,8 @@ var positions_lib: Dictionary[Unit.Team, Dictionary]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	$"../FadeAnimation/AnimationPlayer".play("fadeout")
+	
 	positions_lib = {
 		Unit.Team.Red: {
 			Lane.Left: $LTop.position,

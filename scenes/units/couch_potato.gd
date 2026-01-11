@@ -8,10 +8,11 @@ class_name CouchPotato
 var timer : Timer
 
 var type_odds = {
-	Unit.Type.ARCHER: 0.25,
-	Unit.Type.WARRIOR: 0.25,
-	Unit.Type.LANCER: 0.25,
-	Unit.Type.PAWN: 0.25
+	Unit.Type.ARCHER: 0.2,
+	Unit.Type.WARRIOR: 0.2,
+	Unit.Type.LANCER: 0.2,
+	Unit.Type.PAWN: 0.2,
+	Unit.Type.MONK: 0.2
 }
 
 var team_odds = {
