@@ -185,8 +185,8 @@ with PoseLandmarker.create_from_options(options) as landmarker:
 
 
 
-        if len(encoded_image) <= 65507:
-            client_socket.sendto(encoded_image, (SERVER_IP, SERVER_PORT))
+        if len(pose_str) <= 65507:
+            client_socket.sendto(pose_str.encode('utf-8'), (SERVER_IP, SERVER_PORT))
         else:
             print("Frame too large, skipping")
 
