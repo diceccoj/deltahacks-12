@@ -25,19 +25,19 @@ func _ready() -> void:
 func spawn_unit(type: Unit.Type, team: Unit.Team):
 	# initiate unit
 	var u : Unit = units_lib[type].instantiate()
-	unit_bucket.add_child(u)
 	
 	# decide spawn conditions for unit
 	var start_pos : Vector2
 	match team: 
 		Unit.Team.Red: start_pos = red_start_pos.position
 		_: start_pos = blue_start_pos.position
-		
+	
+	unit_bucket.add_child(u)
 	u.spawn_and_setup(team, start_pos)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	$Server1Debug.text = str($P1Pose.server.is_connection_available())
+	pass#$Server1Debug.text = str($P1Pose.server.is_connection_available())
 
 
 func _on_p_1_pose_pose_changed(pose: String) -> void:

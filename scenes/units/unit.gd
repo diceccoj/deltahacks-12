@@ -67,10 +67,8 @@ func _process(delta: float):
 		#print("Collided with: ", body.name)
 		if (collided_obj is Unit):
 			if (collided_obj.team != team): attack_unit(collided_obj)
-		elif (collided_obj is Tower):
-			if (collided_obj.team != team):  attack_tower(collided_obj)
-	
-	if (current_hp == 0):
+
+	if (current_hp <= 0):
 		perish()
 
 func attack_unit(unit : Unit):
@@ -87,7 +85,7 @@ func attack_tower(tower : Tower):
 
 # subtract hp (possibly update an hp bar?)
 func take_dmg(dmg : float):
-	current_hp = max(0.0, current_hp - dmg)
+	current_hp -= dmg
 
 # delete unit and possibly add any additional effects/functions
 func perish():
