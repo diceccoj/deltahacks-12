@@ -130,7 +130,7 @@ def result_cb(result, output_image: mp.Image, timestamp_ms: int):
         latest_result = result
 
 options = PoseLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path="./pose_landmarker_lite.task"),
+    base_options=BaseOptions(model_asset_path="pose_landmarker_lite.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=result_cb)
 
