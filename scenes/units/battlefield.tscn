@@ -1156,6 +1156,7 @@ offset_left = 211.0
 offset_top = 471.0
 offset_right = 211.0
 offset_bottom = 471.0
+scale = Vector2(1.1274623, 1.1274623)
 metadata/_edit_group_ = true
 
 [node name="JJ" parent="P1Meter" instance=ExtResource("50_e8xa0")]
@@ -1164,6 +1165,7 @@ offset_left = 300.0
 offset_top = 470.0
 offset_right = 300.0
 offset_bottom = 470.0
+scale = Vector2(1.1274623, 1.1274623)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/JJ/Panel" index="1"]
@@ -1172,9 +1174,10 @@ texture = ExtResource("51_ix71i")
 [node name="PushUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 211.0
-offset_top = 385.0
+offset_top = 364.0
 offset_right = 211.0
-offset_bottom = 385.0
+offset_bottom = 364.0
+scale = Vector2(1.1274623, 1.1274623)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/PushUp/Panel" index="1"]
@@ -1183,9 +1186,10 @@ texture = ExtResource("52_iiljl")
 [node name="KneeUp" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 300.0
-offset_top = 386.0
+offset_top = 365.0
 offset_right = 300.0
-offset_bottom = 386.0
+offset_bottom = 365.0
+scale = Vector2(1.1274623, 1.1274623)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/KneeUp/Panel" index="1"]
@@ -1197,6 +1201,7 @@ offset_left = 384.0
 offset_top = 432.0
 offset_right = 384.0
 offset_bottom = 432.0
+scale = Vector2(1.1274623, 1.1274623)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/Lunge/Panel" index="1"]
@@ -1215,6 +1220,7 @@ offset_left = 211.0
 offset_top = 471.0
 offset_right = 211.0
 offset_bottom = 471.0
+scale = Vector2(1.1385984, 1.1385984)
 metadata/_edit_group_ = true
 
 [node name="JJ" parent="P2Meter" instance=ExtResource("50_e8xa0")]
@@ -1223,6 +1229,7 @@ offset_left = 300.0
 offset_top = 470.0
 offset_right = 300.0
 offset_bottom = 470.0
+scale = Vector2(1.1385984, 1.1385984)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/JJ/Panel" index="1"]
@@ -1231,9 +1238,10 @@ texture = ExtResource("51_ix71i")
 [node name="PushUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 211.0
-offset_top = 385.0
+offset_top = 364.0
 offset_right = 211.0
-offset_bottom = 385.0
+offset_bottom = 364.0
+scale = Vector2(1.1385984, 1.1385984)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/PushUp/Panel" index="1"]
@@ -1242,9 +1250,10 @@ texture = ExtResource("52_iiljl")
 [node name="KneeUp" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
 offset_left = 300.0
-offset_top = 386.0
+offset_top = 365.0
 offset_right = 300.0
-offset_bottom = 386.0
+offset_bottom = 365.0
+scale = Vector2(1.1385984, 1.1385984)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/KneeUp/Panel" index="1"]
@@ -1256,6 +1265,7 @@ offset_left = 116.0
 offset_top = 432.0
 offset_right = 116.0
 offset_bottom = 432.0
+scale = Vector2(1.1385984, 1.1385984)
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/Lunge/Panel" index="1"]
