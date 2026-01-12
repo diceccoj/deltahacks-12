@@ -1,4 +1,4 @@
-[gd_scene load_steps=110 format=3 uid="uid://b4sw2qtpxp4h0"]
+[gd_scene load_steps=111 format=3 uid="uid://b4sw2qtpxp4h0"]
 
 [ext_resource type="Script" uid="uid://bysfp5uaf0lfj" path="res://scenes/units/battlefield.gd" id="1_ma1vy"]
 [ext_resource type="Texture2D" uid="uid://00hiefi5h6i8" path="res://assets/Tiny Swords (Free Pack)/Terrain/Tileset/Shadow.png" id="2_q8s32"]
@@ -48,13 +48,14 @@
 [ext_resource type="Texture2D" uid="uid://dbucia70qa3ei" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_01.png" id="44_q3tge"]
 [ext_resource type="Texture2D" uid="uid://c3v2e85xkm1jm" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks in the Water/Water Rocks_02.png" id="45_yo57e"]
 [ext_resource type="PackedScene" uid="uid://vtieh1nclqb3" path="res://python/py_bridge.tscn" id="48_pt8d2"]
-[ext_resource type="Shader" uid="uid://b0gffreje2qgo" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
+[ext_resource type="Shader" path="res://scenes/units/mask.gdshader" id="49_e8xa0"]
 [ext_resource type="FontFile" uid="uid://dnsx6cpgwxjxw" path="res://assets/fonts/ThaleahFat.ttf" id="49_ix71i"]
 [ext_resource type="PackedScene" uid="uid://52ahhvcovnfr" path="res://scenes/exercise_meter.tscn" id="50_e8xa0"]
+[ext_resource type="Script" uid="uid://dkuoeb0xexp75" path="res://scenes/player_meter.gd" id="51_i0uyi"]
 [ext_resource type="Texture2D" uid="uid://sn7lirp7u6ma" path="res://assets/Exersize Icons/JumpingJack.png" id="51_ix71i"]
 [ext_resource type="Texture2D" uid="uid://lfew5qym6t03" path="res://assets/Exersize Icons/Pushup.png" id="52_iiljl"]
 [ext_resource type="Texture2D" uid="uid://r0bex8un7670" path="res://assets/Exersize Icons/KneeUp.png" id="53_ix71i"]
-[ext_resource type="Script" uid="uid://efqlp1ri71sy" path="res://scenes/units/particles.gd" id="53_s7b68"]
+[ext_resource type="Script" path="res://scenes/units/particles.gd" id="53_s7b68"]
 [ext_resource type="Texture2D" uid="uid://df81bx3hb74tq" path="res://assets/Exersize Icons/Lunge.png.png" id="54_ix71i"]
 [ext_resource type="Script" uid="uid://dy2oinrb1vccp" path="res://scenes/endscreen.gd" id="57_o61p2"]
 [ext_resource type="FontFile" uid="uid://c6ggf0jh7hf7i" path="res://assets/fonts/antiquity-print.ttf" id="58_i0uyi"]
@@ -1098,10 +1099,16 @@ position = Vector2(118, 122)
 position = Vector2(908, 117)
 team = 1
 
-[node name="PyBridge" parent="." instance=ExtResource("48_pt8d2")]
+[node name="PyBridge" parent="." node_paths=PackedStringArray("mask_container", "poses_server") instance=ExtResource("48_pt8d2")]
+mask_container = NodePath("../Masks")
+poses_server = NodePath("PoseServer")
+use_venv = true
 
-[node name="Poses" type="Node" parent="."]
+[node name="PoseServer" type="Node" parent="PyBridge" node_paths=PackedStringArray("particles", "p1_meter", "p2_meter")]
 script = ExtResource("4_thxjy")
+particles = NodePath("../../Particles")
+p1_meter = NodePath("../../P1Meter")
+p2_meter = NodePath("../../P2Meter")
 
 [node name="Server1Debug" type="Label" parent="."]
 visible = false
@@ -1132,20 +1139,27 @@ position = Vector2(871, 215)
 
 [node name="UnitBucket" type="Node" parent="."]
 
-[node name="Mask1" type="TextureRect" parent="."]
-material = SubResource("ShaderMaterial_q8s32")
+[node name="Masks" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 offset_top = 414.0
+offset_right = 40.0
+offset_bottom = 454.0
+
+[node name="Mask1" type="TextureRect" parent="Masks"]
+material = SubResource("ShaderMaterial_q8s32")
+layout_mode = 0
 offset_right = 200.0
-offset_bottom = 564.0
+offset_bottom = 150.0
 texture = SubResource("PlaceholderTexture2D_0pva5")
 expand_mode = 1
 
-[node name="Mask2" type="TextureRect" parent="."]
+[node name="Mask2" type="TextureRect" parent="Masks"]
 material = SubResource("ShaderMaterial_q8s32")
+layout_mode = 0
 offset_left = 799.0
-offset_top = 414.0
 offset_right = 999.0
-offset_bottom = 564.0
+offset_bottom = 150.0
 texture = SubResource("PlaceholderTexture2D_0pva5")
 expand_mode = 1
 
@@ -1154,6 +1168,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("51_i0uyi")
 
 [node name="Squat" parent="P1Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
@@ -1171,6 +1186,7 @@ offset_top = 470.0
 offset_right = 300.0
 offset_bottom = 470.0
 scale = Vector2(1.1274623, 1.1274623)
+exercise = 1
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/JJ/Panel" index="1"]
@@ -1183,6 +1199,7 @@ offset_top = 364.0
 offset_right = 211.0
 offset_bottom = 364.0
 scale = Vector2(1.1274623, 1.1274623)
+exercise = 2
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/PushUp/Panel" index="1"]
@@ -1195,6 +1212,7 @@ offset_top = 365.0
 offset_right = 300.0
 offset_bottom = 365.0
 scale = Vector2(1.1274623, 1.1274623)
+exercise = 4
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/KneeUp/Panel" index="1"]
@@ -1207,6 +1225,7 @@ offset_top = 432.0
 offset_right = 384.0
 offset_bottom = 432.0
 scale = Vector2(1.1274623, 1.1274623)
+exercise = 3
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P1Meter/Lunge/Panel" index="1"]
@@ -1218,6 +1237,7 @@ anchors_preset = 0
 offset_left = 411.0
 offset_right = 451.0
 offset_bottom = 40.0
+script = ExtResource("51_i0uyi")
 
 [node name="Squat" parent="P2Meter" instance=ExtResource("50_e8xa0")]
 layout_mode = 1
@@ -1235,6 +1255,7 @@ offset_top = 470.0
 offset_right = 300.0
 offset_bottom = 470.0
 scale = Vector2(1.1385984, 1.1385984)
+exercise = 1
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/JJ/Panel" index="1"]
@@ -1247,6 +1268,7 @@ offset_top = 364.0
 offset_right = 211.0
 offset_bottom = 364.0
 scale = Vector2(1.1385984, 1.1385984)
+exercise = 2
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/PushUp/Panel" index="1"]
@@ -1259,6 +1281,7 @@ offset_top = 365.0
 offset_right = 300.0
 offset_bottom = 365.0
 scale = Vector2(1.1385984, 1.1385984)
+exercise = 4
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/KneeUp/Panel" index="1"]
@@ -1271,6 +1294,7 @@ offset_top = 432.0
 offset_right = 116.0
 offset_bottom = 432.0
 scale = Vector2(1.1385984, 1.1385984)
+exercise = 3
 metadata/_edit_group_ = true
 
 [node name="TextureRect" parent="P2Meter/Lunge/Panel" index="1"]
@@ -1356,9 +1380,6 @@ theme_override_fonts/font = ExtResource("58_i0uyi")
 theme_override_font_sizes/font_size = 26
 text = "REPLAY"
 
-[connection signal="completed_exercise" from="Poses" to="." method="_on_poses_completed_exercise"]
-[connection signal="mask_updated" from="Poses" to="." method="_on_p_1_pose_mask_updated"]
-[connection signal="pose_changed" from="Poses" to="." method="_on_p_1_pose_pose_changed"]
 [connection signal="pressed" from="Endscreen/PlayAgainButton" to="Endscreen" method="_on_play_again_pressed"]
 
 [editable path="P1Meter/JJ"]

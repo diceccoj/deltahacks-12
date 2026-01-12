@@ -10,7 +10,6 @@ class_name Battlefield
 @onready var red_start_pos: Marker2D = $LMid
 @onready var blue_start_pos: Marker2D = $RMid
 
-@onready var pose_server: PoseServer = $Poses
 @onready var endscreen = $Endscreen
 
 
@@ -30,7 +29,6 @@ var positions_lib: Dictionary[Unit.Team, Dictionary]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#$"../FadeAnimation/AnimationPlayer"
-	
 	positions_lib = {
 		Unit.Team.Red: {
 			Lane.Left: $LTop.position,
@@ -57,7 +55,7 @@ func spawn_unit(type: Unit.Type, team: Unit.Team, lane: Lane):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass#$Server1Debug.text = "connection " + str($P1Pose.camera_data[0]["server"].is_connection_available() if "ok" else "lost")
+	pass # $Server1Debug.text = "connection " + str($P1Pose.camera_data[0]["server"].is_connection_available() if "ok" else "lost")
 	#
 	#var pose1 : String = $P1Pose.cur_pose
 	#$Pose1Debug.text = "Player 1 did: " + pose1
@@ -77,8 +75,6 @@ func _process(_delta: float) -> void:
 
 
 func _on_p_1_pose_mask_updated(camera_id: int, texture: ImageTexture) -> void:
-	var image = texture.get_image()
-	var data = image.get_data()
 	if camera_id == 0:
 		$Mask1.texture = texture
 	else:

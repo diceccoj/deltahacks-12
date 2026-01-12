@@ -1,7 +1,15 @@
 extends Node
 class_name PoseServer
 
-@onready var particles := $"../Particles"
+@export var particles: Node2D
+
+@export var p1_meter: Control
+@export var p2_meter: Control
+
+var server_up: bool = false
+
+# a container for the masks
+var masks: Control
 
 enum Exercise {
 	SQUAT,
@@ -11,21 +19,6 @@ enum Exercise {
 	KNEE_UP
 }
 
-@onready var p1_meter_gui: Dictionary[Exercise, ExerciseMeter] = {
-	Exercise.SQUAT: $"../P1Meter/Squat",
-	Exercise.JJ: $"../P1Meter/JJ",
-	Exercise.PUSH_UP: $"../P1Meter/PushUp",
-	Exercise.LUNGE: $"../P1Meter/Lunge",
-	Exercise.KNEE_UP: $"../P1Meter/KneeUp"
-}
-
-@onready var p2_meter_gui: Dictionary[Exercise, ExerciseMeter] = {
-	Exercise.SQUAT: $"../P2Meter/Squat",
-	Exercise.JJ: $"../P2Meter/JJ",
-	Exercise.PUSH_UP: $"../P1Meter/PushUp",
-	Exercise.LUNGE: $"../P2Meter/Lunge",
-	Exercise.KNEE_UP: $"../P2Meter/KneeUp"
-}
 
 const MAX_SQUAT_TIME = 1.5
 const MAX_JJ_COUNT = 14
@@ -82,7 +75,7 @@ signal pose_changed(camera_id: int, pose: String)
 signal exercise_detected(camera_id: int, exercise: String)
 signal mask_updated(camera_id: int, texture: ImageTexture)
 
-func _ready() -> void:
+func start_server() -> void:
 	# Create server for camera 0 (port 4242)
 	camera_data[0]["server"] = UDPServer.new()
 	camera_data[0]["server"].listen(4242)
@@ -98,18 +91,21 @@ func _ready() -> void:
 	camera_data[1]["mask_server"].listen(4343)
 	
 	exercise_detected.connect(my_awesome_function)
+	mask_updated.connect(_on_mask_updated)
 	
 	print("Listening on ports 4242 (Camera 0) and 4243 (Camera 1)")
+	server_up = true
 
 func my_awesome_function(camera_id: int, pose: String):
 	print("Camera ", camera_id, ": ", pose)
 
 func _process(delta: float) -> void:
 	# Process both cameras
-	process_camera(0)
-	process_camera(1)
-	check_for_exercises(0, delta)
-	check_for_exercises(1, delta)
+	if (server_up):
+		process_camera(0)
+		process_camera(1)
+		check_for_exercises(0, delta)
+		check_for_exercises(1, delta)
 
 func process_camera(camera_id: int) -> void:
 	var data = camera_data[camera_id]
@@ -151,7 +147,6 @@ func process_camera(camera_id: int) -> void:
 		var peer = mask_server.take_connection()
 		var packet = peer.get_packet()
 		if packet.size() > 8:
-			var header = packet.slice(0, 4).get_string_from_ascii()
 			var image_data = packet.slice(8)
 			var image = Image.new()
 			var error = image.load_jpg_from_buffer(image_data)
@@ -163,17 +158,16 @@ func process_camera(camera_id: int) -> void:
 
 func check_for_exercises(camera_id: int, delta: float) -> void:
 	var data = camera_data[camera_id]
-	var poses = data["poses"]
 	
 	# exercise protocols:
 		# squat: fill meter continuously while squatting, max out at 2 seconds
 		# jjs: fill meter when alternating between jj open and close, 20 times
 	var state = player_state[camera_id]
-	var gui := p1_meter_gui if camera_id == 0 else p2_meter_gui
+	var gui: PlayerMeter = p1_meter if camera_id == 0 else p2_meter
 	var pose: String = data["current_pose"]
 	#print(camera_id, " ", pose)
 	
-	var mask_pos = $"../Mask1".position + $"../Mask1".size / 2 if camera_id == 0 else $"../Mask2".position + $"../Mask2".size / 2
+	var mask_pos = masks.get_child(0).position + masks.get_child(0).size / 2 if camera_id == 0 else masks.get_child(1).position + masks.get_child(1).size / 2
 	
 	if (camera_id == 0 and not Input.is_key_pressed(KEY_SHIFT)) or (camera_id == 1 and Input.is_key_pressed(KEY_SHIFT)):
 		if Input.is_key_pressed(KEY_A):
@@ -207,27 +201,27 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 	
 	if pose == "squat":
 		state["squat_time"] += delta
-		gui[Exercise.SQUAT].set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
+		gui.set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
 		launch_particles.call(Exercise.SQUAT, 1)
 		if state["squat_time"] > MAX_SQUAT_TIME:
 			state["squat_ready"] = true
-			gui[Exercise.SQUAT].set_readied(true)
+			gui.move_list[Exercise.SQUAT].set_readied(true)
 	else:
 		if not state["squat_ready"]:
 			state["squat_time"] = max(0, state["squat_time"] - delta)
-			gui[Exercise.SQUAT].set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
+			gui.move_list[Exercise.SQUAT].set_progress(clamp(state["squat_time"] / MAX_SQUAT_TIME, 0, 1))
 	
 	if pose == "right lunge" or pose == "left lunge":
 		state["lunge_time"] += delta
-		gui[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
+		gui.move_list[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
 		launch_particles.call(Exercise.LUNGE, 1)
 		if state["lunge_time"] > MAX_LUNGE_TIME:
 			state["lunge_ready"] = true
-			gui[Exercise.LUNGE].set_readied(true)
+			gui.move_list[Exercise.LUNGE].set_readied(true)
 	else:
 		if not state["lunge_ready"]:
 			state["lunge_time"] = max(0, state["lunge_time"] - delta)
-			gui[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
+			gui.move_list[Exercise.LUNGE].set_progress(clamp(state["lunge_time"] / MAX_LUNGE_TIME, 0, 1))
 	
 	
 	if (pose == "jumping_jacks_open" and !state["jj_did_one"]) \
@@ -236,29 +230,29 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 		state["jj_count"] += 1
 		print("DID JJ ", pose, " ", state["jj_count"])
 		launch_particles.call(Exercise.JJ, 5)
-		gui[Exercise.JJ].set_progress(clamp(float(state["jj_count"]) / MAX_JJ_COUNT, 0, 1))
+		gui.move_list[Exercise.JJ].set_progress(clamp(float(state["jj_count"]) / MAX_JJ_COUNT, 0, 1))
 		if state["jj_count"] > MAX_JJ_COUNT:
 			state["jj_ready"] = true
-			gui[Exercise.JJ].set_readied(true)
+			gui.move_list[Exercise.JJ].set_readied(true)
 		
 	if (pose == "push_up" and !state["pu_did_one"]) or (pose == "push_up_down" and state["pu_did_one"]):
 		state["pu_did_one"] = !state["pu_did_one"]
 		state["pu_count"] += 1
 		print("DID PU ", pose, " ", state["pu_count"], " ", state["pu_did_one"])
 		launch_particles.call(Exercise.PUSH_UP, 15)
-		gui[Exercise.PUSH_UP].set_progress(clamp(float(state["pu_count"]) / MAX_PU_COUNT, 0, 1))
+		gui.move_list[Exercise.PUSH_UP].set_progress(clamp(float(state["pu_count"]) / MAX_PU_COUNT, 0, 1))
 		if state["pu_count"] >= MAX_PU_COUNT:
 			state["pu_ready"] = true
-			gui[Exercise.PUSH_UP].set_readied(true)
+			gui.move_list[Exercise.PUSH_UP].set_readied(true)
 			
 	if (pose == "knee_up_l" and !state["ku_did_one"]) or (pose == "knee_up_r" and state["ku_did_one"]):
 		state["ku_did_one"] = !state["ku_did_one"]
 		state["ku_count"] += 1
 		launch_particles.call(Exercise.KNEE_UP, 5)
-		gui[Exercise.KNEE_UP].set_progress(clamp(float(state["ku_count"]) / MAX_KU_COUNT, 0, 1))
+		gui.move_list[Exercise.KNEE_UP].set_progress(clamp(float(state["ku_count"]) / MAX_KU_COUNT, 0, 1))
 		if state["ku_count"] >= MAX_KU_COUNT:
 			state["ku_ready"] = true
-			gui[Exercise.KNEE_UP].set_readied(true)
+			gui.move_list[Exercise.KNEE_UP].set_readied(true)
 	
 	## SEEND IT!
 	if pose == "place_left" || pose == "place_right":
@@ -275,8 +269,8 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 			if state[s]: # ready
 				completed_exercise.emit(camera_id, ex, pose == "place_left")
 				state[s] = false
-				gui[ex].set_progress(0)
-				gui[ex].set_readied(false)
+				gui.move_list[ex].set_progress(0)
+				gui.move_list[ex].set_readied(false)
 				
 				if ex == Exercise.SQUAT:
 					state["squat_time"] = 0
@@ -291,8 +285,6 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 				elif ex == Exercise.KNEE_UP:
 					state["ku_count"] = 0
 					state["ku_did_one"] = false
-	
-	
 	# Define exercise pairs: [start_pose, end_pose, exercise_name, alt_start_pose (optional)]
 	#var exercise_pairs = [
 		#["standing", "squat", "squat", "jumping_jacks_closed"],
@@ -320,3 +312,10 @@ func check_for_exercises(camera_id: int, delta: float) -> void:
 					#exercise_detected.emit(camera_id, exercise_name)
 					#data["time"] = 0
 					#return  # Exit after detecting one exercise
+
+
+func _on_mask_updated(camera_id: int, texture: ImageTexture) -> void:
+	if (camera_id == 0):
+		(masks.get_child(0) as TextureRect).texture = texture
+	elif (camera_id == 1):
+		(masks.get_child(1) as TextureRect).texture = texture

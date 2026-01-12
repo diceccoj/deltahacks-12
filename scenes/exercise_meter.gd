@@ -2,6 +2,7 @@ extends Control
 class_name ExerciseMeter
 
 @export var color : Color
+@export var exercise : PoseServer.Exercise
 
 var readied := false
 var progress : float = 0.0
